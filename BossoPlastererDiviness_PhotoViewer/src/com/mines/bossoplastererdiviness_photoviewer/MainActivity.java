@@ -14,7 +14,9 @@ import android.view.Menu;
  * 
  * Documentation Statement:
  * 
- * @author Naomi Plasterer Brandon Bosso Austin Diviness
+ * @author Naomi Plasterer
+ * @author Brandon Bosso
+ * @author Austin Diviness
  */
 public class MainActivity extends Activity {
 
