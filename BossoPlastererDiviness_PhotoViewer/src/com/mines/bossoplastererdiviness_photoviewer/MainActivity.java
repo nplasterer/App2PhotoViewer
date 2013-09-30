@@ -8,7 +8,9 @@ package com.mines.bossoplastererdiviness_photoviewer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -28,8 +30,8 @@ import com.dropbox.sync.android.DbxAccountManager;
  */
 public class MainActivity extends Activity {
 	private DbxAccountManager accountManager;
-	private static final String APP_KEY = null;
-	private static final String APP_SECRET = null;
+	private static final String APP_KEY = "null";
+	private static final String APP_SECRET = "null";
 	public static final int DROPBOX_REQUEST_LINK = 0;
 	
 	/* (non-Javadoc)
@@ -49,10 +51,25 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.remove_account:
+			accountManager.unlink();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		//accountManager.unlink();
+	}
 	/**
 	 * This creates an intent when clicked and sends it to the slideshow activity.
 	 * 
@@ -79,7 +96,12 @@ public class MainActivity extends Activity {
 	 * @param view -the view that was clicked
 	 */
 	public void addAccount(View view) {
-		accountManager.startLink((Activity)this, DROPBOX_REQUEST_LINK);
+		try{
+			accountManager.startLink((Activity)this, DROPBOX_REQUEST_LINK);
+		}catch(Exception e){
+			Log.d("log", e.getMessage());
+		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -87,6 +109,12 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Toast.makeText(getApplicationContext(), "activity result", Toast.LENGTH_LONG).show();
+		if (accountManager.hasLinkedAccount()){
+			Log.d("log", "has linked account");
+		}
+		Log.d("log", "request code" + requestCode);
+		Log.d("log", "result code" + resultCode);
 		if (resultCode == DROPBOX_REQUEST_LINK) {
 			if (resultCode == Activity.RESULT_OK) {
 				//lets the user know that there account has been linked

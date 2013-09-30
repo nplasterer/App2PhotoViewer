@@ -7,5 +7,6 @@
     <string name="start_slideshow">Start Slideshow</string>
     <string name="view_photos">View Photos</string>
     <string name="main_title">Photo Viewer</string>
+    <string name="remove_account">Remove Account</string>
 
 </resources>
