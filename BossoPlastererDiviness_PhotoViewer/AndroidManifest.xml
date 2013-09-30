@@ -25,6 +25,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+		<activity
+            android:name="com.mines.bossoplastererdiviness_photoviewer.SlideshowActivity"
+            android:label="@string/app_name" >
+        </activity>
+		<activity
+            android:name="com.mines.bossoplastererdiviness_photoviewer.ViewPhotosActivity"
+            android:label="@string/app_name" >
+        </activity>
 
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
         <activity
