@@ -47,6 +47,16 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		accountManager = DbxAccountManager.getInstance(getApplicationContext(), APP_KEY, APP_SECRET);
+		if(!accountManager.hasLinkedAccount()) {
+			View slideshow = findViewById(R.id.start_slideshow);
+			slideshow.setVisibility(View.GONE);
+			View photos = findViewById(R.id.view_photos);
+			photos.setVisibility(View.GONE);
+		}
+		else {
+			View add = findViewById(R.id.add_account);
+			add.setVisibility(View.GONE);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -65,6 +75,12 @@ public class MainActivity extends Activity {
 		case R.id.remove_account:
 			accountManager.unlink();
 			dbxFs = null;
+			View slideshow = findViewById(R.id.start_slideshow);
+			slideshow.setVisibility(View.GONE);
+			View photos = findViewById(R.id.view_photos);
+			photos.setVisibility(View.GONE);
+			View add = findViewById(R.id.add_account);
+			add.setVisibility(View.VISIBLE);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -116,16 +132,19 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Toast.makeText(getApplicationContext(), "activity result", Toast.LENGTH_LONG).show();
 		if (accountManager.hasLinkedAccount()){
 			Log.d("log", "has linked account");
 		}
-		Log.d("log", "request code" + requestCode);
-		Log.d("log", "result code" + resultCode);
-		if (resultCode == DROPBOX_REQUEST_LINK) {
+		if (requestCode == DROPBOX_REQUEST_LINK) {
 			if (resultCode == Activity.RESULT_OK) {
 				//lets the user know that there account has been linked
 				Toast.makeText(getApplicationContext(), "linked", Toast.LENGTH_LONG).show();
+				View slideshow = findViewById(R.id.start_slideshow);
+				slideshow.setVisibility(View.VISIBLE);
+				View photos = findViewById(R.id.view_photos);
+				photos.setVisibility(View.VISIBLE);
+				View add = findViewById(R.id.add_account);
+				add.setVisibility(View.GONE);
 				try {
 					dbxFs = DbxFileSystem.forAccount(accountManager.getLinkedAccount());
 				} catch (Unauthorized e) {
