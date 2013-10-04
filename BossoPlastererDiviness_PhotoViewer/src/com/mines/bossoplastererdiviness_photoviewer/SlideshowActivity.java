@@ -1,5 +1,7 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
+import com.dropbox.sync.android.DbxFileSystem;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,6 +14,7 @@ import android.view.Menu;
  * @author Austin Diviness
  */
 public class SlideshowActivity extends Activity {
+	private DbxFileSystem dbxFs = null;
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -19,6 +22,12 @@ public class SlideshowActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.start_slideshow);
+		dbxFs = (DbxFileSystem)getIntent().getExtras().getSerializable("dbxFs");
+	}
+	
+	@Override
+	public void onStart(){
+		
 	}
 
 	/* (non-Javadoc)

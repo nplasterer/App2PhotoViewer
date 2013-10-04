@@ -5,6 +5,8 @@ package com.mines.bossoplastererdiviness_photoviewer;
  * target: JellyBean 4.1.2 SDK version 16
  */
 
+import java.io.Serializable;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.dropbox.sync.android.DbxFileSystem;
 
 
 /**
@@ -30,9 +34,10 @@ import com.dropbox.sync.android.DbxAccountManager;
  */
 public class MainActivity extends Activity {
 	private DbxAccountManager accountManager;
-	private static final String APP_KEY = "null";
-	private static final String APP_SECRET = "null";
+	private static final String APP_KEY = "";
+	private static final String APP_SECRET = "";
 	public static final int DROPBOX_REQUEST_LINK = 0;
+	private DbxFileSystem dbxFs = null;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -59,6 +64,7 @@ public class MainActivity extends Activity {
 		switch(item.getItemId()) {
 		case R.id.remove_account:
 			accountManager.unlink();
+			dbxFs = null;
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -77,6 +83,7 @@ public class MainActivity extends Activity {
 	 */
 	public void startSlideshow(View view){
 		Intent slideshow = new Intent(this, SlideshowActivity.class);
+		slideshow.putExtra("dbxFs", (Serializable)dbxFs);
 		startActivity(slideshow);	
 	}
 	
@@ -119,6 +126,11 @@ public class MainActivity extends Activity {
 			if (resultCode == Activity.RESULT_OK) {
 				//lets the user know that there account has been linked
 				Toast.makeText(getApplicationContext(), "linked", Toast.LENGTH_LONG).show();
+				try {
+					dbxFs = DbxFileSystem.forAccount(accountManager.getLinkedAccount());
+				} catch (Unauthorized e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
