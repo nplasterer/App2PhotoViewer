@@ -81,9 +81,9 @@ public class MainActivity extends Activity {
 	 * 
 	 * @param view -the view that was clicked
 	 */
-	public void startSlideshow(View view){
+	public void startSlideshow(View view) {
 		Intent slideshow = new Intent(this, SlideshowActivity.class);
-		slideshow.putExtra("dbxFs", (Serializable)dbxFs);
+		slideshow.putExtra("dbxFs", (Serializable) dbxFs);
 		startActivity(slideshow);	
 	}
 	
@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
 	 * 
 	 * @param view -the view that was clicked
 	 */
-	public void viewPhotos(View view){
+	public void viewPhotos(View view) {
 		Intent viewphotos = new Intent(this, ViewPhotosActivity.class);
 		startActivity(viewphotos);	
 	}
@@ -103,10 +103,10 @@ public class MainActivity extends Activity {
 	 * @param view -the view that was clicked
 	 */
 	public void addAccount(View view) {
-		try{
+		try {
 			accountManager.startLink((Activity)this, DROPBOX_REQUEST_LINK);
-		}catch(Exception e){
-			Log.d("log", e.getMessage());
+		} catch(Exception e){
+			e.printStackTrace();
 		}
 		
 	}
@@ -116,13 +116,7 @@ public class MainActivity extends Activity {
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Toast.makeText(getApplicationContext(), "activity result", Toast.LENGTH_LONG).show();
-		if (accountManager.hasLinkedAccount()){
-			Log.d("log", "has linked account");
-		}
-		Log.d("log", "request code" + requestCode);
-		Log.d("log", "result code" + resultCode);
-		if (resultCode == DROPBOX_REQUEST_LINK) {
+		if (requestCode == DROPBOX_REQUEST_LINK) {
 			if (resultCode == Activity.RESULT_OK) {
 				//lets the user know that there account has been linked
 				Toast.makeText(getApplicationContext(), "linked", Toast.LENGTH_LONG).show();
