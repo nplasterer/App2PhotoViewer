@@ -8,33 +8,43 @@
         style="@style/MainTitle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"
+        android:layout_weight="0.33"
         android:text="@string/main_title" />
 
-    <Button
-        android:id="@+id/start_slideshow"
-        style="@style/Button"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:onClick="startSlideshow"
-        android:text="@string/start_slideshow" />
-    <Button
-        android:id="@+id/view_photos"
-        style="@style/Button"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:onClick="viewPhotos"
-        android:text="@string/view_photos" />
-
-    <Button
-        android:id="@+id/add_account"
-        style="@style/Button"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        android:onClick="addAccount"
-        android:text="@string/add_account" />
+   <LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="0dp"
+    	android:layout_weight="0.67"
+    	android:orientation="vertical"
+    	android:layout_gravity="center" >
+    
+	    <Button
+	        android:id="@+id/start_slideshow"
+	        style="@style/Button"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+			android:layout_weight=".5"
+	        android:onClick="startSlideshow"
+	        android:text="@string/start_slideshow" />
+	    
+	    <Button
+	        android:id="@+id/view_photos"
+	        style="@style/Button"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight=".5"
+	        android:onClick="viewPhotos"
+	        android:text="@string/view_photos" />
+	
+	    <Button
+	        android:id="@+id/add_account"
+	        style="@style/Button"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight=".5"
+	        android:onClick="addAccount"
+	        android:text="@string/add_account" />
+	    
+	    </LinearLayout>
 
 </LinearLayout>
