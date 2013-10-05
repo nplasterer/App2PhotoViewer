@@ -73,6 +73,10 @@ public class MainActivity extends Activity {
 			photos.setVisibility(View.GONE);
 			View add = findViewById(R.id.add_account);
 			add.setVisibility(View.VISIBLE);
+			// remove image files that may have been saved previously
+			for (String file: fileList()) {
+				deleteFile(file);
+			}
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

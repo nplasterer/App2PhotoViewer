@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
@@ -53,10 +54,13 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 			DbxPath path = new DbxPath(PATH);
 			filesInfo = filesystem.listFolder(path);
 			for (DbxFileInfo fileInfo: filesInfo) {
-				DbxFile file = filesystem.open(fileInfo.path);
-				Bitmap image = bitmapFactory.decodeStream(file.getReadStream());
-				saveFile(image, fileInfo.path.getName());
-				file.close();
+				String filename = fileInfo.path.getName();
+				if (!Arrays.asList(activity.fileList()).contains(filename)) {
+					DbxFile file = filesystem.open(fileInfo.path);
+					Bitmap image = bitmapFactory.decodeStream(file.getReadStream());
+					saveFile(image, filename);
+					file.close();
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
