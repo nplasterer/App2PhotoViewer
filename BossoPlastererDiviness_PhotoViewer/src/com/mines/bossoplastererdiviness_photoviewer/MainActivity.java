@@ -5,20 +5,15 @@ package com.mines.bossoplastererdiviness_photoviewer;
  * target: JellyBean 4.1.2 SDK version 16
  */
 
-import java.io.Serializable;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxException.Unauthorized;
-import com.dropbox.sync.android.DbxFileSystem;
 
 
 /**
@@ -37,7 +32,6 @@ public class MainActivity extends Activity {
 	public static final String APP_KEY = "ebig093cmc8g6go";
 	public static final String APP_SECRET = "nx0ryugdsn42cut";
 	public static final int DROPBOX_REQUEST_LINK = 0;
-	private DbxFileSystem dbxFs = null;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -73,8 +67,6 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.remove_account:
-			accountManager.unlink();
-			dbxFs = null;
 			View slideshow = findViewById(R.id.start_slideshow);
 			slideshow.setVisibility(View.GONE);
 			View photos = findViewById(R.id.view_photos);
