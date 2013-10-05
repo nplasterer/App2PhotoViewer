@@ -44,7 +44,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private int period;
 	private Handler handler;
 	private Runnable slideShowRunnable;
-	private boolean wifiConnected;
+	private boolean slideshowStarted;
 	
 	
 	/* (non-Javadoc)
@@ -74,12 +74,10 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		delay = 0;
 		period = 3000;
 		timer = new Timer();
-		wifiConnected = false;
+		slideshowStarted= false;
 		
 		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		Log.d("mine", wifi.toString());
 		if (wifi.isWifiEnabled()){
-			wifiConnected = true;
 			download();
 		}
 		else {
@@ -88,7 +86,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			    public void onClick(DialogInterface dialog, int which) {
 			        switch (which){
 			        case DialogInterface.BUTTON_POSITIVE:
-			        	wifiConnected = true;
 			        	dialog.dismiss();
 			        	download();
 			            break;
@@ -101,7 +98,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			        	//Open wifi settings
 			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
 			        	startActivityForResult(wifiSettings, 1);
-			        	wifiConnected = true;
 			        	dialog.dismiss();
 			        	break;
 			        }
@@ -115,27 +111,19 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == 1) {
-			wifiConnected = true;
 			download();
 		}
 	}
 	
 	public void download() {
-		if(wifiConnected) {
-			downloadTask = new DownloadImagesTask(this, this);
-			downloadTask.execute(filesystem);
-		}
+		downloadTask = new DownloadImagesTask(this, this);
+		downloadTask.execute(filesystem);
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		if(images.size() > 0) {
+		if(fileList().length > 0 && slideshowStarted) {
 			imageIndex--;
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerTask() {
@@ -143,6 +131,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 					handler.post(slideShowRunnable);
 				}
 			}, delay, period); }
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();	
 	}
 	
 	@Override
@@ -154,13 +147,14 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	public void updateSlideshow() {
 		int index = imageIndex % fileList().length;
 		Log.d("mine", fileList()[index]);
-		Bitmap myBitmap = BitmapFactory.decodeFile(fileList()[index]);
+		Bitmap myBitmap = BitmapFactory.decodeFile(getFilesDir() + "/" + fileList()[index]);
 		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
 		container.setImageBitmap(myBitmap);
 		imageIndex++;
 	}
 	
 	public void startSlideshow() {
+		slideshowStarted = true;
 		imageIndex = 0;
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {

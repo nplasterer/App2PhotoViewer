@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
@@ -47,15 +48,14 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	@Override
 	protected Boolean doInBackground(DbxFileSystem... params) {
 		BitmapFactory bitmapFactory = new BitmapFactory();
-		try{
+		try {
 			DbxFileSystem filesystem = params[0];
 			DbxPath path = new DbxPath(PATH);
 			filesInfo = filesystem.listFolder(path);
-			Log.d("mine", filesInfo.size());
 			for (DbxFileInfo fileInfo: filesInfo) {
 				DbxFile file = filesystem.open(fileInfo.path);
 				Bitmap image = bitmapFactory.decodeStream(file.getReadStream());
-				saveFile(image, fileInfo.path.getName().split(".")[0]);
+				saveFile(image, fileInfo.path.getName());
 				file.close();
 			}
 		} catch (Exception e) {
@@ -75,11 +75,10 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	}
 	
 	protected void saveFile(Bitmap image, String filename) {
-		filename += ".png";
-		Log.d("mine", "savingfile"+filename);
+		//filename += ".png";
 		try {
 			FileOutputStream fileOutStream = activity.openFileOutput(filename, Context.MODE_PRIVATE);
-			image.compress(Bitmap.CompressFormat.PNG, 90, fileOutStream);
+			image.compress(Bitmap.CompressFormat.JPEG, 90, fileOutStream);
 			fileOutStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
