@@ -3,9 +3,14 @@ package com.mines.bossoplastererdiviness_photoviewer;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ImageView;
 
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
@@ -22,6 +27,11 @@ import com.dropbox.sync.android.DbxFileSystem;
 public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private DbxFileSystem filesystem = null;
 	private DownloadImagesTask downloadTask;
+	private ArrayList<Bitmap> images;
+	private int imageIndex;
+	private Timer timer;
+	private int delay;
+	private int period;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -41,6 +51,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			Log.d("mine", "OMG ITS NULL");
 		}
 		
+		images = new ArrayList<Bitmap>();
+		imageIndex = 0;
+		delay = 0;
+		period = 3000;
+		timer = new Timer();
 	}
 	
 	@Override
@@ -49,6 +64,22 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		Log.d("mine", "In on start");
 		downloadTask = new DownloadImagesTask(this);
 		downloadTask.execute(filesystem);
+	}
+	
+	public void startSlideshow() {
+		imageIndex = 0;
+		slideshow();
+	}
+	
+	public void slideshow() {
+		timer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				int index = imageIndex % images.size();
+				ImageView container = (ImageView) findViewById(R.id.slideshow_container);
+				container.setImageBitmap(images.get(index));
+				imageIndex++;
+			}
+		}, delay, period);
 	}
 
 	/* (non-Javadoc)
