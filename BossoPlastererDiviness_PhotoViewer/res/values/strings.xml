@@ -10,5 +10,9 @@
     <string name="remove_account">Remove Account</string>
     <string name="no_images">No images were found in app folder</string>
     <string name="account_linked">Account has been linked</string>
+    <string name="data_warning">You are not currently connected to wifi. This app may consume a large amount of data. Would you like to continue?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="wifi">Wifi Settings</string>
 
 </resources>

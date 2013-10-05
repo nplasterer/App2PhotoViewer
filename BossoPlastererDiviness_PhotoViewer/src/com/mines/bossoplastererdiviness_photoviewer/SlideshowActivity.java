@@ -5,9 +5,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -36,6 +43,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private int period;
 	private Handler handler;
 	private Runnable slideShowRunnable;
+	private boolean wifiConnected;
 	
 	
 	/* (non-Javadoc)
@@ -60,14 +68,62 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 				updateSlideshow();
 			}
 		};
-		
 		images = new ArrayList<Bitmap>();
 		imageIndex = 0;
 		delay = 0;
 		period = 3000;
 		timer = new Timer();
-		downloadTask = new DownloadImagesTask(this, this);
-		downloadTask.execute(filesystem);
+		wifiConnected = false;
+		
+		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		Log.d("mine", wifi.toString());
+		if (wifi.isWifiEnabled()){
+			wifiConnected = true;
+			download();
+		}
+		else {
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+			        switch (which){
+			        case DialogInterface.BUTTON_POSITIVE:
+			        	wifiConnected = true;
+			        	dialog.dismiss();
+			        	download();
+			            break;
+
+			        case DialogInterface.BUTTON_NEGATIVE:
+			        	dialog.dismiss();
+			            break;
+			        
+			        case DialogInterface.BUTTON_NEUTRAL:
+			        	//Open wifi settings
+			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+			        	startActivityForResult(wifiSettings, 1);
+			        	wifiConnected = true;
+			        	dialog.dismiss();
+			        	break;
+			        }
+			    }
+			};
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(getResources().getString(R.string.data_warning)).setPositiveButton(getResources().getString(R.string.yes), dialogClickListener)
+				.setNegativeButton(getResources().getString(R.string.no), dialogClickListener).setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener).show();
+		}
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == 1) {
+			wifiConnected = true;
+			download();
+		}
+	}
+	
+	public void download() {
+		if(wifiConnected) {
+			downloadTask = new DownloadImagesTask(this, this);
+			downloadTask.execute(filesystem);
+		}
 	}
 	
 	@Override
@@ -103,6 +159,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	
 	public void startSlideshow() {
 		imageIndex = 0;
+		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				handler.post(slideShowRunnable);
