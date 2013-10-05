@@ -35,7 +35,7 @@ import com.dropbox.sync.android.DbxFileSystem;
 public class MainActivity extends Activity {
 	private DbxAccountManager accountManager;
 	public static final String APP_KEY = "ebig093cmc8g6go";
-	public static final String APP_SECRET = "";
+	public static final String APP_SECRET = "nx0ryugdsn42cut";
 	public static final int DROPBOX_REQUEST_LINK = 0;
 	private DbxFileSystem dbxFs = null;
 	
