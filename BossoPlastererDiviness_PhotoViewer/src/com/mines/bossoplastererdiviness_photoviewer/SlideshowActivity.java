@@ -8,8 +8,9 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.start_slideshow);
 		DbxAccountManager accManager = DbxAccountManager.getInstance(getApplicationContext(), MainActivity.APP_KEY, MainActivity.APP_SECRET);
 		DbxAccount account = accManager.getLinkedAccount();
@@ -70,7 +73,25 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	@Override
 	public void onStart() {
 		super.onStart();
-
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if(images.size() > 0) {
+			imageIndex--;
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new TimerTask() {
+				public void run() {
+					handler.post(slideShowRunnable);
+				}
+			}, delay, period); }
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		timer.cancel();
 	}
 	
 	public void updateSlideshow() {
