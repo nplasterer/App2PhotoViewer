@@ -1,13 +1,13 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
 import java.util.ArrayList;
-
-import android.app.Activity;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.ImageView;
@@ -32,6 +32,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Timer timer;
 	private int delay;
 	private int period;
+	private Handler mHandler;
+	private Runnable slideShowRunnable;
+	
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -51,33 +54,41 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			Log.d("mine", "OMG ITS NULL");
 		}
 		
+		mHandler = new Handler();
+		slideShowRunnable = new Runnable() {
+			public void run() {
+				updateSlideshow();
+			}
+		};
+		
 		images = new ArrayList<Bitmap>();
 		imageIndex = 0;
 		delay = 0;
 		period = 3000;
 		timer = new Timer();
+		
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
 		Log.d("mine", "In on start");
-		downloadTask = new DownloadImagesTask(this);
+		downloadTask = new DownloadImagesTask(this, this);
 		downloadTask.execute(filesystem);
+	}
+	
+	public void updateSlideshow() {
+		int index = imageIndex % images.size();
+		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
+		container.setImageBitmap(images.get(index));
+		imageIndex++;
 	}
 	
 	public void startSlideshow() {
 		imageIndex = 0;
-		slideshow();
-	}
-	
-	public void slideshow() {
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
-				int index = imageIndex % images.size();
-				ImageView container = (ImageView) findViewById(R.id.slideshow_container);
-				container.setImageBitmap(images.get(index));
-				imageIndex++;
+				mHandler.post(slideShowRunnable);
 			}
 		}, delay, period);
 	}
@@ -93,8 +104,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	}
 
 	@Override
-	public void onTaskCompleted(ArrayList<?> image) {
-		
+	public void onTaskCompleted(ArrayList<Bitmap> image) {
+		images = image;
+		startSlideshow();
 	}
 
 }

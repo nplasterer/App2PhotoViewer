@@ -5,10 +5,12 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.dropbox.sync.android.DbxException;
+import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
@@ -18,14 +20,15 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	private ProgressDialog loadingDialog;
 	private Activity activity;
 	private OnTaskCompleted listener;
-	private ArrayList<?> image;
+	private ArrayList<Bitmap> images;
 	private List<DbxFileInfo> filesInfo;
 	public static final String PATH = "/";
 	
-	public DownloadImagesTask(Activity activity) {
+	public DownloadImagesTask(Activity activity, OnTaskCompleted listener) {
 		this.activity = activity;
-		//this.listener=listener;
+		this.listener=listener;
 		filesInfo = new ArrayList<DbxFileInfo>();
+		images = new ArrayList<Bitmap>();
 	}
 	@Override
 	protected void onPreExecute() {
@@ -37,6 +40,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 
 	@Override
 	protected Boolean doInBackground(DbxFileSystem... params) {
+		BitmapFactory bitmapFactory = new BitmapFactory();
 		try{
 			DbxFileSystem filesystem = params[0];
 			if (filesystem == null){
@@ -48,8 +52,11 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 			Log.d("mine", "filesInfo size: " + filesInfo.size());
 			for (DbxFileInfo fileInfo: filesInfo) {
 				Log.d("mine", fileInfo.path.getName());
+				DbxFile file = filesystem.open(fileInfo.path);
+				Bitmap image = bitmapFactory.decodeStream(file.getReadStream());
+				images.add(image);
+				file.close();
 			}
-			Thread.sleep(3000);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.d("mine", "We got an error");
@@ -64,10 +71,8 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 
 	@Override 
 	protected void onPostExecute(Boolean result) {
-		//listener.onTaskCompleted(image);
-		//loadingDialog.dismiss();
-		Log.d("mine", "Post execute");
 		
+		listener.onTaskCompleted(images);	
 	}
 
 	
