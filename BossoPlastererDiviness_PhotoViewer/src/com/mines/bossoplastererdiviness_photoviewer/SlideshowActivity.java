@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
@@ -32,7 +33,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Timer timer;
 	private int delay;
 	private int period;
-	private Handler mHandler;
+	private Handler handler;
 	private Runnable slideShowRunnable;
 	
 	
@@ -49,12 +50,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			filesystem = DbxFileSystem.forAccount(account);
 		} catch (Unauthorized e) {
 			e.printStackTrace();
-		}
-		if (filesystem == null){
-			Log.d("mine", "OMG ITS NULL");
-		}
-		
-		mHandler = new Handler();
+		}	
+		handler = new Handler();
 		slideShowRunnable = new Runnable() {
 			public void run() {
 				updateSlideshow();
@@ -66,15 +63,14 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		delay = 0;
 		period = 3000;
 		timer = new Timer();
-		
+		downloadTask = new DownloadImagesTask(this, this);
+		downloadTask.execute(filesystem);
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
-		Log.d("mine", "In on start");
-		downloadTask = new DownloadImagesTask(this, this);
-		downloadTask.execute(filesystem);
+
 	}
 	
 	public void updateSlideshow() {
@@ -88,7 +84,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		imageIndex = 0;
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
-				mHandler.post(slideShowRunnable);
+				handler.post(slideShowRunnable);
 			}
 		}, delay, period);
 	}
@@ -106,7 +102,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	@Override
 	public void onTaskCompleted(ArrayList<Bitmap> image) {
 		images = image;
-		startSlideshow();
+		if (images.size() > 0) {
+			startSlideshow();
+		} else {
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
+		}
 	}
 
 }

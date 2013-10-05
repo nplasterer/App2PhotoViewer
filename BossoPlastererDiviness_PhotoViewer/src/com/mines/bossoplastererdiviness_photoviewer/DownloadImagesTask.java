@@ -43,15 +43,9 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 		BitmapFactory bitmapFactory = new BitmapFactory();
 		try{
 			DbxFileSystem filesystem = params[0];
-			if (filesystem == null){
-				Log.d("mine", "OMG ITS NULL");
-			}
 			DbxPath path = new DbxPath(PATH);
-			Log.d("mine", "In background task2" + params.length);
 			filesInfo = filesystem.listFolder(path);
-			Log.d("mine", "filesInfo size: " + filesInfo.size());
 			for (DbxFileInfo fileInfo: filesInfo) {
-				Log.d("mine", fileInfo.path.getName());
 				DbxFile file = filesystem.open(fileInfo.path);
 				Bitmap image = bitmapFactory.decodeStream(file.getReadStream());
 				images.add(image);
@@ -59,7 +53,6 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.d("mine", "We got an error");
 		} finally {
 			loadingDialog.dismiss();
 		}
@@ -71,7 +64,6 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 
 	@Override 
 	protected void onPostExecute(Boolean result) {
-		
 		listener.onTaskCompleted(images);	
 	}
 

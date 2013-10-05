@@ -8,5 +8,7 @@
     <string name="view_photos">View Photos</string>
     <string name="main_title">Photo Viewer</string>
     <string name="remove_account">Remove Account</string>
+    <string name="no_images">No images were found in app folder</string>
+    <string name="account_linked">Account has been linked</string>
 
 </resources>
