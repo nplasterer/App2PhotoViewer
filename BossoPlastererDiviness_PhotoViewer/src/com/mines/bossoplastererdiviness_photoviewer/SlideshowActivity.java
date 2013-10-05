@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -151,9 +152,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	}
 	
 	public void updateSlideshow() {
-		int index = imageIndex % images.size();
+		int index = imageIndex % fileList().length;
+		Log.d("mine", fileList()[index]);
+		Bitmap myBitmap = BitmapFactory.decodeFile(fileList()[index]);
 		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
-		container.setImageBitmap(images.get(index));
+		container.setImageBitmap(myBitmap);
 		imageIndex++;
 	}
 	
@@ -178,9 +181,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	}
 
 	@Override
-	public void onTaskCompleted(ArrayList<Bitmap> image) {
-		images = image;
-		if (images.size() > 0) {
+	public void onTaskCompleted() {
+		
+		if (fileList().length > 0) {
 			startSlideshow();
 		} else {
 			Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
