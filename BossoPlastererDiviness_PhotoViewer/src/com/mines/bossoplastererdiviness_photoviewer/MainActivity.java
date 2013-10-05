@@ -34,8 +34,8 @@ import com.dropbox.sync.android.DbxFileSystem;
  */
 public class MainActivity extends Activity {
 	private DbxAccountManager accountManager;
-	private static final String APP_KEY = "";
-	private static final String APP_SECRET = "";
+	public static final String APP_KEY = "ebig093cmc8g6go";
+	public static final String APP_SECRET = "";
 	public static final int DROPBOX_REQUEST_LINK = 0;
 	private DbxFileSystem dbxFs = null;
 	
@@ -99,7 +99,6 @@ public class MainActivity extends Activity {
 	 */
 	public void startSlideshow(View view) {
 		Intent slideshow = new Intent(this, SlideshowActivity.class);
-		slideshow.putExtra("dbxFs", (Serializable) dbxFs);
 		startActivity(slideshow);	
 	}
 	
@@ -135,20 +134,15 @@ public class MainActivity extends Activity {
 		if (requestCode == DROPBOX_REQUEST_LINK) {
 			if (resultCode == Activity.RESULT_OK) {
 				//lets the user know that there account has been linked
-				Toast.makeText(getApplicationContext(), "linked", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.account_linked), Toast.LENGTH_LONG).show();
+				// set visibility of buttons
 				View slideshow = findViewById(R.id.start_slideshow);
 				slideshow.setVisibility(View.VISIBLE);
 				View photos = findViewById(R.id.view_photos);
 				photos.setVisibility(View.VISIBLE);
 				View add = findViewById(R.id.add_account);
 				add.setVisibility(View.GONE);
-				try {
-					dbxFs = DbxFileSystem.forAccount(accountManager.getLinkedAccount());
-				} catch (Unauthorized e) {
-					e.printStackTrace();
-				}
 			}
 		}
-		
 	}
 }
