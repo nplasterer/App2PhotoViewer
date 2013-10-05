@@ -14,5 +14,6 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="wifi">Wifi Settings</string>
+    <string name="version_3">Coming Soon in Version 3</string>
 
 </resources>
