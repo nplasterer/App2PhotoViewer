@@ -14,7 +14,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxFile;
@@ -62,8 +61,11 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 					file.close();
 				}
 			}
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
+			Toast.makeText(activity.getBaseContext(), "Download stopping", Toast.LENGTH_SHORT).show();
+			return false;
 		} finally {
 			loadingDialog.dismiss();
 		}
