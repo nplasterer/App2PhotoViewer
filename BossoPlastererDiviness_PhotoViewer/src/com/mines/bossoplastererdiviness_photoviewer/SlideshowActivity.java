@@ -74,8 +74,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		delay = 0;
 		period = 3000;
 		timer = new Timer();
-		slideshowStarted= false;
+		slideshowStarted = false;
 		
+		// check for enabled wifi
 		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 		if (wifi.isWifiEnabled()){
 			download();
@@ -84,28 +85,33 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			    @Override
 			    public void onClick(DialogInterface dialog, int which) {
-			        switch (which){
+					Boolean shouldDownload = false;
+			        switch (which) {
 			        case DialogInterface.BUTTON_POSITIVE:
-			        	dialog.dismiss();
-			        	download();
+						shouldDownload = true;
 			            break;
 
 			        case DialogInterface.BUTTON_NEGATIVE:
-			        	dialog.dismiss();
 			            break;
 			        
 			        case DialogInterface.BUTTON_NEUTRAL:
 			        	//Open wifi settings
 			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
 			        	startActivityForResult(wifiSettings, 1);
-			        	dialog.dismiss();
 			        	break;
 			        }
+					dialog.dismiss();
+					if (shouldDownload) {
+						download();
+					}
 			    }
 			};
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(getResources().getString(R.string.data_warning)).setPositiveButton(getResources().getString(R.string.yes), dialogClickListener)
-				.setNegativeButton(getResources().getString(R.string.no), dialogClickListener).setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener).show();
+			builder.setMessage(getResources().getString(R.string.data_warning));
+			builder.setPositiveButton(getResources().getString(R.string.yes), dialogClickListener);
+			builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
+			builder.setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener);
+			builder.show();
 		}
 	}
 	
@@ -153,6 +159,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		imageIndex++;
 	}
 	
+	/**
+	 * Runs the slideshow.
+	 */
 	public void startSlideshow() {
 		slideshowStarted = true;
 		imageIndex = 0;
@@ -174,6 +183,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		return true;
 	}
 
+	/**
+	 * Callback function used to start the slideshow.
+	 */
 	@Override
 	public void onTaskCompleted() {
 		
