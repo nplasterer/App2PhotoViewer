@@ -11,9 +11,12 @@
     <string name="no_images">No images were found in app folder</string>
     <string name="account_linked">Account has been linked</string>
     <string name="data_warning">You are not currently connected to wifi. This app may consume a large amount of data. Would you like to continue?</string>
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="wifi">Wifi Settings</string>
     <string name="version_3">Coming Soon in Version 3</string>
+    <string name="downloading_images">Downloading Images</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="download_stopping">Download stopping</string>
 
 </resources>

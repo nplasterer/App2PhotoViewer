@@ -40,8 +40,8 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	@Override
 	protected void onPreExecute() {
 		loadingDialog = new ProgressDialog(activity);
-		loadingDialog.setTitle("Downloading Images");
-		loadingDialog.setMessage("Please wait...");
+		loadingDialog.setTitle(getResources().getString(R.string.downloading_images));
+		loadingDialog.setMessage(getResources().getString(R.string.please_wait));
 		loadingDialog.show();
 	}
 
@@ -64,7 +64,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
-			Toast.makeText(activity.getBaseContext(), "Download stopping", Toast.LENGTH_SHORT).show();
+			Toast.makeText(activity.getBaseContext(), getResources().getString(R.string.download_stopping), Toast.LENGTH_SHORT).show();
 			return false;
 		} finally {
 			loadingDialog.dismiss();
