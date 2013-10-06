@@ -45,6 +45,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Handler handler;
 	private Runnable slideShowRunnable;
 	private boolean slideshowStarted;
+	public static final int WIFI_SETTINGS_REQUEST = 1;
 	
 	
 	/* (non-Javadoc)
@@ -97,7 +98,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			        case DialogInterface.BUTTON_NEUTRAL:
 			        	//Open wifi settings
 			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
-			        	startActivityForResult(wifiSettings, 1);
+			        	startActivityForResult(wifiSettings, WIFI_SETTINGS_REQUEST);
 			        	break;
 			        }
 					dialog.dismiss();
@@ -115,12 +116,21 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		}
 	}
 	
+	/**
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 * Called on activity result. Currently used only to check returning from wifi 
+	 * settings menu.
+	 *
+	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == 1) {
+		if(requestCode == WIFI_SETTINGS_REQUEST) {
 			download();
 		}
 	}
 	
+	/**
+	 * Starts async task to download images from dropbox.
+	 */
 	public void download() {
 		downloadTask = new DownloadImagesTask(this, this);
 		downloadTask.execute(filesystem);
@@ -137,11 +147,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 					handler.post(slideShowRunnable);
 				}
 			}, delay, period); }
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();	
 	}
 	
 	@Override
@@ -188,7 +193,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	 */
 	@Override
 	public void onTaskCompleted() {
-		
 		if (fileList().length > 0) {
 			startSlideshow();
 		} else {
