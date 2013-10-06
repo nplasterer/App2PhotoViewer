@@ -54,9 +54,24 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.start_slideshow);
+		// set fullscreen window attributes TODO can this be moved to xml layout?
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.start_slideshow);
+		// set instance variables
+		images = new ArrayList<Bitmap>();
+		imageIndex = 0;
+		delay = 0;
+		period = 3000;
+		timer = new Timer();
+		slideshowStarted = false;
+		handler = new Handler();
+		slideShowRunnable = new Runnable() {
+			public void run() {
+				updateSlideshow();
+			}
+		};
+		// get dropbox filesystem
 		DbxAccountManager accManager = DbxAccountManager.getInstance(getApplicationContext(), MainActivity.APP_KEY, MainActivity.APP_SECRET);
 		DbxAccount account = accManager.getLinkedAccount();
 		try {
@@ -64,56 +79,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		} catch (Unauthorized e) {
 			e.printStackTrace();
 		}	
-		handler = new Handler();
-		slideShowRunnable = new Runnable() {
-			public void run() {
-				updateSlideshow();
-			}
-		};
-		images = new ArrayList<Bitmap>();
-		imageIndex = 0;
-		delay = 0;
-		period = 3000;
-		timer = new Timer();
-		slideshowStarted = false;
-		
 		// check for enabled wifi
-		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		if (wifi.isWifiEnabled()){
-			download();
-		}
-		else {
-			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-					Boolean shouldDownload = false;
-			        switch (which) {
-			        case DialogInterface.BUTTON_POSITIVE:
-						shouldDownload = true;
-			            break;
-
-			        case DialogInterface.BUTTON_NEGATIVE:
-			            break;
-			        
-			        case DialogInterface.BUTTON_NEUTRAL:
-			        	//Open wifi settings
-			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
-			        	startActivityForResult(wifiSettings, WIFI_SETTINGS_REQUEST);
-			        	break;
-			        }
-					dialog.dismiss();
-					if (shouldDownload) {
-						download();
-					}
-			    }
-			};
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(getResources().getString(R.string.data_warning));
-			builder.setPositiveButton(getResources().getString(R.string.yes), dialogClickListener);
-			builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
-			builder.setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener);
-			builder.show();
-		}
+		wifiCheck();
 	}
 	
 	/**
@@ -189,7 +156,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	}
 
 	/**
-	 * Callback function used to start the slideshow.
+	 * Callback function used to start the slideshow if images to show exist.
 	 */
 	@Override
 	public void onTaskCompleted() {
@@ -197,6 +164,49 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			startSlideshow();
 		} else {
 			Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
+		}
+	}
+
+	/**
+	 * checks if wifi is enabled, creating a dialog to check if it's ok to 
+	 * continue downloading if it is not.
+	 */
+	public void wifiCheck() {
+		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		if (wifi.isWifiEnabled()){
+			download();
+		}
+		else {
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+					Boolean shouldDownload = false;
+			        switch (which) {
+			        case DialogInterface.BUTTON_POSITIVE:
+						shouldDownload = true;
+			            break;
+
+			        case DialogInterface.BUTTON_NEGATIVE:
+			            break;
+			        
+			        case DialogInterface.BUTTON_NEUTRAL:
+			        	//Open wifi settings
+			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+			        	startActivityForResult(wifiSettings, WIFI_SETTINGS_REQUEST);
+			        	break;
+			        }
+					dialog.dismiss();
+					if (shouldDownload) {
+						download();
+					}
+			    }
+			};
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(getResources().getString(R.string.data_warning));
+			builder.setPositiveButton(getResources().getString(R.string.yes), dialogClickListener);
+			builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
+			builder.setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener);
+			builder.show();
 		}
 	}
 
