@@ -73,6 +73,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 				String filename = fileInfo.path.getName();
 				if (!Arrays.asList(activity.fileList()).contains(filename)) {
 					DbxFile file = filesystem.open(fileInfo.path);
+					System.gc();
 					Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
 					saveFile(image, filename);
 					file.close();

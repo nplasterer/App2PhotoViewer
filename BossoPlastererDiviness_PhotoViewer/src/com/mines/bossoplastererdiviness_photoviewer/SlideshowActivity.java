@@ -132,6 +132,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	public void updateSlideshow() {
 		int index = imageIndex % fileList().length;
 		Log.d("mine", fileList()[index]);
+		System.gc();
 		Bitmap myBitmap = BitmapFactory.decodeFile(getFilesDir() + "/" + fileList()[index]);
 		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
 		container.setImageBitmap(myBitmap);
