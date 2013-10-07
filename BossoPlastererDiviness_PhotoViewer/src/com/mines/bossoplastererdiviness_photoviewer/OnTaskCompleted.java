@@ -1,9 +1,12 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
-import java.util.ArrayList;
-
-import android.graphics.Bitmap;
-
+/**
+ * Description: 
+ * 
+ * @author Austin Diviness
+ * @author Naomi Plasterer
+ * @author Brandon Bosso
+ */
 public interface OnTaskCompleted {
 	void onTaskCompleted();
 }

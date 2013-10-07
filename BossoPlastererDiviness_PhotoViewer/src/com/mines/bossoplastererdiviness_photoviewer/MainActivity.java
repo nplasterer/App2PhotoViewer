@@ -1,8 +1,13 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
-/*Emulator Options
+/**
+ * Emulator Options
  * device: Nexus 7
  * target: JellyBean 4.1.2 SDK version 16
+ * 
+ * Dropbox Account Information
+ * login:
+ * password: 
  */
 
 
@@ -22,6 +27,7 @@ import com.dropbox.sync.android.DbxAccountManager;
  * 
  * Documentation Statement: We worked on this as a team. All of this code is original. When we got
  * stuck we used stackoverflow.com for hints and the Dropbox API as documentation.
+ * Point Distribution: We would like to distribute the points evenly among all three of us.
  * 
  * @author Naomi Plasterer
  * @author Brandon Bosso
@@ -29,6 +35,7 @@ import com.dropbox.sync.android.DbxAccountManager;
  */
 public class MainActivity extends Activity {
 	private DbxAccountManager accountManager;
+	//app specific key and secret provided from dropbox
 	public static final String APP_KEY = "ebig093cmc8g6go";
 	public static final String APP_SECRET = "nx0ryugdsn42cut";
 	public static final int DROPBOX_REQUEST_LINK = 0;
@@ -40,14 +47,15 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//get account manager
 		accountManager = DbxAccountManager.getInstance(getApplicationContext(), APP_KEY, APP_SECRET);
+		//check to see if an account is already linked
 		if(!accountManager.hasLinkedAccount()) {
 			View slideshow = findViewById(R.id.start_slideshow);
 			slideshow.setVisibility(View.GONE);
 			View photos = findViewById(R.id.view_photos);
 			photos.setVisibility(View.GONE);
-		}
-		else {
+		} else {
 			View add = findViewById(R.id.add_account);
 			add.setVisibility(View.GONE);
 		}
@@ -63,6 +71,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
@@ -83,12 +94,7 @@ public class MainActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-		//accountManager.unlink();
-	}
+	
 	/**
 	 * This creates an intent when clicked and sends it to the slideshow activity.
 	 * 

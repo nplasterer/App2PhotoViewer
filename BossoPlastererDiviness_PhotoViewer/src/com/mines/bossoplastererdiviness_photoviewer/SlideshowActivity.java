@@ -1,6 +1,5 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,7 +36,6 @@ import com.dropbox.sync.android.DbxFileSystem;
 public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private DbxFileSystem filesystem = null;
 	private DownloadImagesTask downloadTask;
-	private ArrayList<Bitmap> images;
 	private int imageIndex;
 	private Timer timer;
 	private int delay;
@@ -54,12 +52,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.start_slideshow);
 		// set fullscreen window attributes TODO can this be moved to xml layout?
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(R.layout.start_slideshow);
 		// set instance variables
-		images = new ArrayList<Bitmap>();
 		imageIndex = 0;
 		delay = 0;
 		period = 3000;
@@ -84,10 +81,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	}
 	
 	/**
+	 *  (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 * 
 	 * Called on activity result. Currently used only to check returning from wifi 
 	 * settings menu.
-	 *
 	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == WIFI_SETTINGS_REQUEST) {
@@ -103,6 +101,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		downloadTask.execute(filesystem);
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onStart()
+	 */
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -116,12 +117,18 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			}, delay, period); }
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onStop()
+	 */
 	@Override
 	public void onStop() {
 		super.onStop();
 		timer.cancel();
 	}
 	
+	/**
+	 * A function that increments the counter and makes the new image appear on screen.
+	 */
 	public void updateSlideshow() {
 		int index = imageIndex % fileList().length;
 		Log.d("mine", fileList()[index]);
@@ -181,12 +188,14 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			    @Override
 			    public void onClick(DialogInterface dialog, int which) {
 					Boolean shouldDownload = false;
+					Boolean startSlideshow = false;
 			        switch (which) {
 			        case DialogInterface.BUTTON_POSITIVE:
 						shouldDownload = true;
 			            break;
 
 			        case DialogInterface.BUTTON_NEGATIVE:
+			        	startSlideshow = true;
 			            break;
 			        
 			        case DialogInterface.BUTTON_NEUTRAL:
@@ -198,6 +207,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 					dialog.dismiss();
 					if (shouldDownload) {
 						download();
+					} else if (startSlideshow) {
+						startSlideshow();
 					}
 			    }
 			};

@@ -1,6 +1,6 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,33 +21,50 @@ import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 
+/**
+ * Description: This class downloads images from dropbox on different threads.
+ * 
+ * @author Austin Diviness
+ * @author Naomi Plasterer
+ * @author Brandon Bosso
+ */
 public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> {
 
 	private ProgressDialog loadingDialog;
 	private Activity activity;
 	private OnTaskCompleted listener;
-	private ArrayList<Bitmap> images;
 	private List<DbxFileInfo> filesInfo;
-	private File storageDir;
 	public static final String PATH = "/";
 	
+	/**
+	 * This is a constructor that sets the variables for this class.
+	 * 
+	 * @param activity - the calling activity
+	 * @param listener - a listener to return content to the calling activity
+	 */
 	public DownloadImagesTask(Activity activity, OnTaskCompleted listener) {
 		this.activity = activity;
 		this.listener=listener;
 		filesInfo = new ArrayList<DbxFileInfo>();
-		images = new ArrayList<Bitmap>();
 	}
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#onPreExecute()
+	 */
 	@Override
 	protected void onPreExecute() {
+		//Loading bar to show that images are downloading
 		loadingDialog = new ProgressDialog(activity);
-		loadingDialog.setTitle(getResources().getString(R.string.downloading_images));
-		loadingDialog.setMessage(getResources().getString(R.string.please_wait));
+		loadingDialog.setTitle(activity.getResources().getString(R.string.downloading_images));
+		loadingDialog.setMessage(activity.getResources().getString(R.string.please_wait));
 		loadingDialog.show();
 	}
 
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
 	protected Boolean doInBackground(DbxFileSystem... params) {
-		BitmapFactory bitmapFactory = new BitmapFactory();
+		//Downloads images and saves them to a app specific folder on the device
 		try {
 			DbxFileSystem filesystem = params[0];
 			DbxPath path = new DbxPath(PATH);
@@ -56,7 +73,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 				String filename = fileInfo.path.getName();
 				if (!Arrays.asList(activity.fileList()).contains(filename)) {
 					DbxFile file = filesystem.open(fileInfo.path);
-					Bitmap image = bitmapFactory.decodeStream(file.getReadStream());
+					Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
 					saveFile(image, filename);
 					file.close();
 				}
@@ -64,7 +81,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
-			Toast.makeText(activity.getBaseContext(), getResources().getString(R.string.download_stopping), Toast.LENGTH_SHORT).show();
+			Toast.makeText(activity.getBaseContext(), activity.getResources().getString(R.string.download_stopping), Toast.LENGTH_SHORT).show();
 			return false;
 		} finally {
 			loadingDialog.dismiss();
@@ -75,13 +92,21 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	
 
 
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+	 */
 	@Override 
 	protected void onPostExecute(Boolean result) {
 		listener.onTaskCompleted();	
 	}
 	
+	/**
+	 * This function saves a bitmap image to a file in the specified app specific folder.
+	 * 
+	 * @param image - the bitmap image from dropbox
+	 * @param filename - the name of the file from dropbox to be saved
+	 */
 	protected void saveFile(Bitmap image, String filename) {
-		//filename += ".png";
 		try {
 			FileOutputStream fileOutStream = activity.openFileOutput(filename, Context.MODE_PRIVATE);
 			image.compress(Bitmap.CompressFormat.JPEG, 90, fileOutStream);
@@ -90,11 +115,6 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
-		
+		}	
 	}
-
-	
-
 }
