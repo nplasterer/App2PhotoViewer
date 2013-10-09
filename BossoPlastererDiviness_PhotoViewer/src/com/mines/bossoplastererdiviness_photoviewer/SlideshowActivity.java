@@ -49,6 +49,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Handler handler;
 	private Runnable slideShowRunnable;
 	private boolean slideshowStarted;
+	private Bitmap currentBitmap;
+	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
 	public static final String PATH = "/";
 	
@@ -125,20 +127,21 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	 */
 	public void updateSlideshow() {
 		System.gc();
+		currentBitmap = nextBitmap;
+		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
+		container.setImageBitmap(currentBitmap);
 		imageIndex = imageIndex % files.size();
 		while (files.get(imageIndex).isFolder) {
 			imageIndex = (1 + imageIndex) % files.size();
 		}
-		Bitmap bitmap = null;
 		DbxFile file = null;
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inPurgeable = true;
 		options.inSampleSize = 2;
 		try {
 			file = filesystem.open(files.get(imageIndex).path);
-			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
-			ImageView container = (ImageView) findViewById(R.id.slideshow_container);
-			container.setImageBitmap(bitmap);
+			nextBitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
+
 		} catch (DbxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -163,8 +166,56 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 				handler.post(slideShowRunnable);
 			}
 		}, delay, period);
+		initialBitmapLoad();
 	}
 
+	public void initialBitmapLoad() {
+		currentBitmap = nextBitmap;
+
+		imageIndex = imageIndex % files.size();
+		while (files.get(imageIndex).isFolder) {
+			imageIndex = (1 + imageIndex) % files.size();
+		}
+		DbxFile file = null;
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPurgeable = true;
+		options.inSampleSize = 2;
+		try {
+			file = filesystem.open(files.get(imageIndex).path);
+			currentBitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
+			ImageView container = (ImageView) findViewById(R.id.slideshow_container);
+			container.setImageBitmap(currentBitmap);
+
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			file.close();
+		}
+		imageIndex++;
+		imageIndex = imageIndex % files.size();
+		while (files.get(imageIndex).isFolder) {
+			imageIndex = (1 + imageIndex) % files.size();
+		}
+		file = null;
+		try {
+			file = filesystem.open(files.get(imageIndex).path);
+			nextBitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			file.close();
+		}
+		imageIndex++;
+		
+	}
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */
