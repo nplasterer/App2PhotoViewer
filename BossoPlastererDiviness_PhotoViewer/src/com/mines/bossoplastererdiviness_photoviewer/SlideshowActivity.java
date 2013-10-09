@@ -126,11 +126,17 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	public void updateSlideshow() {
 		System.gc();
 		imageIndex = imageIndex % files.size();
+		while (files.get(imageIndex).isFolder) {
+			imageIndex = (1 + imageIndex) % files.size();
+		}
 		Bitmap bitmap = null;
 		DbxFile file = null;
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPurgeable = true;
+		options.inSampleSize = 2;
 		try {
 			file = filesystem.open(files.get(imageIndex).path);
-			bitmap = BitmapFactory.decodeStream(file.getReadStream());
+			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
 			ImageView container = (ImageView) findViewById(R.id.slideshow_container);
 			container.setImageBitmap(bitmap);
 		} catch (DbxException e) {
@@ -142,8 +148,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		} finally {
 			file.close();
 		}
-		
-
 		imageIndex++;
 	}
 	
