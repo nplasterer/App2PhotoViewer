@@ -296,7 +296,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
     /** 
      * Calculates the sample size for a file.
      *
-     * @param options The BitmapFactory.Options vriable that has the tested dimensions of the file
+     * @param options The BitmapFactory.Options variable that has the tested dimensions of the file
      * @param width Screen width
      * @param height Screen height
      */
