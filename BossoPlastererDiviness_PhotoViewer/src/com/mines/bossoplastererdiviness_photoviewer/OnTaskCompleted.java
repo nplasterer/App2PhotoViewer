@@ -8,5 +8,5 @@ package com.mines.bossoplastererdiviness_photoviewer;
  * @author Brandon Bosso
  */
 public interface OnTaskCompleted {
-	void onTaskCompleted();
+	void onTaskCompleted(int requestID);
 }

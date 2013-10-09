@@ -34,6 +34,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	private Activity activity;
 	private OnTaskCompleted listener;
 	private List<DbxFileInfo> filesInfo;
+	private int requestID;
 	
 	/**
 	 * This is a constructor that sets the variables for this class.
@@ -41,9 +42,10 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	 * @param activity - the calling activity
 	 * @param listener - a listener to return content to the calling activity
 	 */
-	public DownloadImagesTask(Activity activity, OnTaskCompleted listener) {
+	public DownloadImagesTask(Activity activity, OnTaskCompleted listener, int requestID) {
 		this.activity = activity;
-		this.listener=listener;
+		this.listener = listener;
+		this.requestID = requestID;
 		filesInfo = new ArrayList<DbxFileInfo>();
 	}
 	/* (non-Javadoc)
@@ -96,7 +98,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	 */
 	@Override 
 	protected void onPostExecute(Boolean result) {
-		listener.onTaskCompleted();	
+		listener.onTaskCompleted(requestID);	
 	}
 	
 	/**

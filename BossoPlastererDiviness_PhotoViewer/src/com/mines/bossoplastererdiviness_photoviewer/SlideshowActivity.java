@@ -52,6 +52,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Bitmap currentBitmap;
 	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
+	public static final int DOWNLOAD_IMAGES_TASK_REQUEST = 2;
 	private BitmapFactory.Options bitmapOptions;
 
 	
@@ -177,11 +178,13 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	 * Callback function used to start the slideshow if images to show exist.
 	 */
 	@Override
-	public void onTaskCompleted() {
-		if (fileList().length > 0) {
-			startSlideshow();
-		} else {
-			Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
+	public void onTaskCompleted(int requestID) {
+		if (requestID == DOWNLOAD_IMAGES_TASK_REQUEST) {
+			if (fileList().length > 0) {
+				startSlideshow();
+			} else {
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 
@@ -241,7 +244,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private void loadBitmap(BitmapSelect which) {
 		DbxFile file = null;
 		Bitmap bitmap = null;
-		LoadImageTask loadImageTask = new LoadImageTask();
 		try {
 			file = filesystem.open(files.get(imageIndex).path);
 			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, bitmapOptions);
