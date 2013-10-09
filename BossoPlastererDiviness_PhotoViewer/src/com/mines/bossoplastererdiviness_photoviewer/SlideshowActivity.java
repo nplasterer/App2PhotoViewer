@@ -1,5 +1,7 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,7 +16,6 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,8 +24,13 @@ import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.dropbox.sync.android.DbxFile;
+import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxPath;
+import com.dropbox.sync.android.DbxPath.InvalidPathException;
 
 /**
  * Description: Displays slideshow of photos
@@ -35,7 +41,7 @@ import com.dropbox.sync.android.DbxFileSystem;
  */
 public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private DbxFileSystem filesystem = null;
-	private DownloadImagesTask downloadTask;
+	private List<DbxFileInfo> files;
 	private int imageIndex;
 	private Timer timer;
 	private int delay;
@@ -44,6 +50,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Runnable slideShowRunnable;
 	private boolean slideshowStarted;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
+	public static final String PATH = "/";
 	
 	
 	/* (non-Javadoc)
@@ -73,33 +80,20 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		DbxAccount account = accManager.getLinkedAccount();
 		try {
 			filesystem = DbxFileSystem.forAccount(account);
+			files = filesystem.listFolder(new DbxPath(PATH));
 		} catch (Unauthorized e) {
+			e.printStackTrace();
+		} catch (InvalidPathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 		// check for enabled wifi
 		wifiCheck();
 	}
-	
-	/**
-	 *  (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 * 
-	 * Called on activity result. Currently used only to check returning from wifi 
-	 * settings menu.
-	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == WIFI_SETTINGS_REQUEST) {
-			download();
-		}
-	}
-	
-	/**
-	 * Starts async task to download images from dropbox.
-	 */
-	public void download() {
-		downloadTask = new DownloadImagesTask(this, this);
-		downloadTask.execute(filesystem);
-	}
+
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onStart()
@@ -130,12 +124,26 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	 * A function that increments the counter and makes the new image appear on screen.
 	 */
 	public void updateSlideshow() {
-		int index = imageIndex % fileList().length;
-		Log.d("mine", fileList()[index]);
 		System.gc();
-		Bitmap myBitmap = BitmapFactory.decodeFile(getFilesDir() + "/" + fileList()[index]);
-		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
-		container.setImageBitmap(myBitmap);
+		imageIndex = imageIndex % files.size();
+		Bitmap bitmap = null;
+		DbxFile file = null;
+		try {
+			file = filesystem.open(files.get(imageIndex).path);
+			bitmap = BitmapFactory.decodeStream(file.getReadStream());
+			ImageView container = (ImageView) findViewById(R.id.slideshow_container);
+			container.setImageBitmap(bitmap);
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			file.close();
+		}
+		
+
 		imageIndex++;
 	}
 	
@@ -182,7 +190,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	public void wifiCheck() {
 		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 		if (wifi.isWifiEnabled()){
-			download();
+			startSlideshow();
 		}
 		else {
 			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -192,7 +200,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 					Boolean startSlideshow = false;
 			        switch (which) {
 			        case DialogInterface.BUTTON_POSITIVE:
-						shouldDownload = true;
+						startSlideshow = true;
 			            break;
 
 			        case DialogInterface.BUTTON_NEGATIVE:
@@ -206,9 +214,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			        	break;
 			        }
 					dialog.dismiss();
-					if (shouldDownload) {
-						download();
-					} else if (startSlideshow) {
+					if (startSlideshow) {
 						startSlideshow();
 					}
 			    }
