@@ -12,10 +12,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.view.Display;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -53,7 +55,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
 	public static final int DOWNLOAD_IMAGES_TASK_REQUEST = 2;
-	private BitmapFactory.Options bitmapOptions;
 
 	
 	
@@ -79,9 +80,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 				updateSlideshow();
 			}
 		};
-		bitmapOptions = new BitmapFactory.Options();
-		bitmapOptions.inPurgeable = true;
-		bitmapOptions.inSampleSize = 2;
 		// get dropbox filesystem
 		DbxAccountManager accManager = DbxAccountManager.getInstance(getApplicationContext(), MainActivity.APP_KEY, MainActivity.APP_SECRET);
 		DbxAccount account = accManager.getLinkedAccount();
@@ -245,8 +243,10 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		DbxFile file = null;
 		Bitmap bitmap = null;
 		try {
+
 			file = filesystem.open(files.get(imageIndex).path);
-			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, bitmapOptions);
+			// set up bitmap options
+			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, setBitmapOptions(file));
 			if (which == BitmapSelect.CURRENT) {
 				currentBitmap = bitmap;
 			} else {
@@ -259,6 +259,30 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		} finally {
 			file.close();
 		}
+	}
+	
+	private BitmapFactory.Options setBitmapOptions(DbxFile file) throws DbxException, IOException {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		BitmapFactory.Options testOptions = new BitmapFactory.Options();
+		// get screen size
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		// set options
+		testOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(file.getReadStream(), null, testOptions);
+		options.inSampleSize = calculateSampleSize(testOptions, size.x, size.y);
+		return options;
+	}
+	
+	private int calculateSampleSize(BitmapFactory.Options options, int width, int height) {
+		int sampleSize = 1;
+		if (options.outHeight > height || options.outWidth > width) {
+			int heightRatio = Math.round((float) options.outHeight / height);
+			int widthRatio = Math.round((float) options.outWidth / width);
+			sampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+		}
+		return sampleSize;
 	}
 
 }
