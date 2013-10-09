@@ -53,6 +53,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
 	public static final String PATH = "/";
+	private BitmapFactory.Options bitmapOptions;
+
 	
 	
 	/* (non-Javadoc)
@@ -77,6 +79,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 				updateSlideshow();
 			}
 		};
+		bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inPurgeable = true;
+		bitmapOptions.inSampleSize = 2;
 		// get dropbox filesystem
 		DbxAccountManager accManager = DbxAccountManager.getInstance(getApplicationContext(), MainActivity.APP_KEY, MainActivity.APP_SECRET);
 		DbxAccount account = accManager.getLinkedAccount();
@@ -130,28 +135,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		currentBitmap = nextBitmap;
 		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
 		container.setImageBitmap(currentBitmap);
-		imageIndex = imageIndex % files.size();
-		while (files.get(imageIndex).isFolder) {
-			imageIndex = (1 + imageIndex) % files.size();
-		}
-		DbxFile file = null;
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPurgeable = true;
-		options.inSampleSize = 2;
-		try {
-			file = filesystem.open(files.get(imageIndex).path);
-			nextBitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
-
-		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			file.close();
-		}
-		imageIndex++;
+		loadBitmap(BitmapSelect.NEXT);
+		setIndexNextFile();
 	}
 	
 	/**
@@ -170,50 +155,13 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	}
 
 	public void initialBitmapLoad() {
+		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
 		currentBitmap = nextBitmap;
-
-		imageIndex = imageIndex % files.size();
-		while (files.get(imageIndex).isFolder) {
-			imageIndex = (1 + imageIndex) % files.size();
-		}
-		DbxFile file = null;
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPurgeable = true;
-		options.inSampleSize = 2;
-		try {
-			file = filesystem.open(files.get(imageIndex).path);
-			currentBitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
-			ImageView container = (ImageView) findViewById(R.id.slideshow_container);
-			container.setImageBitmap(currentBitmap);
-
-		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			file.close();
-		}
-		imageIndex++;
-		imageIndex = imageIndex % files.size();
-		while (files.get(imageIndex).isFolder) {
-			imageIndex = (1 + imageIndex) % files.size();
-		}
-		file = null;
-		try {
-			file = filesystem.open(files.get(imageIndex).path);
-			nextBitmap = BitmapFactory.decodeStream(file.getReadStream(), null, options);
-		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			file.close();
-		}
-		imageIndex++;
+		loadBitmap(BitmapSelect.CURRENT);
+		container.setImageBitmap(currentBitmap);
+		setIndexNextFile();
+		loadBitmap(BitmapSelect.NEXT);
+		setIndexNextFile();
 		
 	}
 	/* (non-Javadoc)
@@ -280,6 +228,35 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
 			builder.setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener);
 			builder.show();
+		}
+	}
+	
+	private void setIndexNextFile() {
+		++imageIndex;
+		imageIndex = imageIndex % files.size();
+		while (files.get(imageIndex).isFolder) {
+			imageIndex = (1 + imageIndex) % files.size();
+		}
+	}
+	
+	private void loadBitmap(BitmapSelect which) {
+		DbxFile file = null;
+		Bitmap bitmap = null;
+		LoadImageTask loadImageTask = new LoadImageTask();
+		try {
+			file = filesystem.open(files.get(imageIndex).path);
+			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, bitmapOptions);
+			if (which == BitmapSelect.CURRENT) {
+				currentBitmap = bitmap;
+			} else {
+				nextBitmap = bitmap;
+			}
+		} catch (DbxException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			file.close();
 		}
 	}
 
