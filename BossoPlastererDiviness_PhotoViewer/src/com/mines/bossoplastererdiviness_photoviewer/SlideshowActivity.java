@@ -52,7 +52,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Bitmap currentBitmap;
 	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
-	public static final String PATH = "/";
 	private BitmapFactory.Options bitmapOptions;
 
 	
@@ -87,7 +86,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		DbxAccount account = accManager.getLinkedAccount();
 		try {
 			filesystem = DbxFileSystem.forAccount(account);
-			files = filesystem.listFolder(new DbxPath(PATH));
+			files = filesystem.listFolder(DbxPath.ROOT);
 		} catch (Unauthorized e) {
 			e.printStackTrace();
 		} catch (InvalidPathException e) {
@@ -108,7 +107,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if(fileList().length > 0 && slideshowStarted) {
+		if(slideshowStarted) {
 			imageIndex--;
 			timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerTask() {

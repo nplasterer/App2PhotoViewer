@@ -34,7 +34,6 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	private Activity activity;
 	private OnTaskCompleted listener;
 	private List<DbxFileInfo> filesInfo;
-	public static final String PATH = "/";
 	
 	/**
 	 * This is a constructor that sets the variables for this class.
@@ -67,8 +66,7 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 		//Downloads images and saves them to a app specific folder on the device
 		try {
 			DbxFileSystem filesystem = params[0];
-			DbxPath path = new DbxPath(PATH);
-			filesInfo = filesystem.listFolder(path);
+			filesInfo = filesystem.listFolder(DbxPath.ROOT);
 			for (DbxFileInfo fileInfo: filesInfo) {
 				String filename = fileInfo.path.getName();
 				if (!Arrays.asList(activity.fileList()).contains(filename)) {
