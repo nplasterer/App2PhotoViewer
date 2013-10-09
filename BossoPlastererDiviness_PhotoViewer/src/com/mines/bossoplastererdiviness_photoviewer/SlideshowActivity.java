@@ -152,6 +152,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		initialBitmapLoad();
 	}
 
+    /**
+     * initial set up for loading bitmaps for slideshow to use.
+     */
 	public void initialBitmapLoad() {
 		ImageView container = (ImageView) findViewById(R.id.slideshow_container);
 		currentBitmap = nextBitmap;
@@ -231,6 +234,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		}
 	}
 	
+    /**
+     * increments index so that the index relates to a file.
+     */
 	private void setIndexNextFile() {
 		++imageIndex;
 		imageIndex = imageIndex % files.size();
@@ -239,6 +245,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		}
 	}
 	
+    /**
+     * loads a bitmap.
+     *
+     * @param which The variable to load the bitmap to
+     */
 	private void loadBitmap(BitmapSelect which) {
 		DbxFile file = null;
 		Bitmap bitmap = null;
@@ -261,6 +272,13 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		}
 	}
 	
+    /**
+     * Sets BitmapFactory options for the file.
+     *
+     * @param file The file to create options for
+     *
+     * @return BitmapFactory.Options object specific to the file
+     */
 	private BitmapFactory.Options setBitmapOptions(DbxFile file) throws DbxException, IOException {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		BitmapFactory.Options testOptions = new BitmapFactory.Options();
@@ -275,6 +293,13 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		return options;
 	}
 	
+    /** 
+     * Calculates the sample size for a file.
+     *
+     * @param options The BitmapFactory.Options vriable that has the tested dimensions of the file
+     * @param width Screen width
+     * @param height Screen height
+     */
 	private int calculateSampleSize(BitmapFactory.Options options, int width, int height) {
 		int sampleSize = 1;
 		if (options.outHeight > height || options.outWidth > width) {
