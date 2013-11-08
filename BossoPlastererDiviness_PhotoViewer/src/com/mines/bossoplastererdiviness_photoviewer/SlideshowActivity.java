@@ -95,8 +95,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
-		// check for enabled wifi
-		wifiCheck();
 	}
 
 	
@@ -114,6 +112,9 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 					handler.post(slideShowRunnable);
 				}
 			}, delay, period); }
+		else{
+			startSlideshow();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -186,51 +187,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			} else {
 				Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
 			}
-		}
-	}
-
-	/**
-	 * checks if wifi is enabled, creating a dialog to check if it's ok to 
-	 * continue downloading if it is not.
-	 */
-	public void wifiCheck() {
-		WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		if (wifi.isWifiEnabled()){
-			startSlideshow();
-		}
-		else {
-			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-					Boolean shouldDownload = false;
-					Boolean startSlideshow = false;
-			        switch (which) {
-			        case DialogInterface.BUTTON_POSITIVE:
-						startSlideshow = true;
-			            break;
-
-			        case DialogInterface.BUTTON_NEGATIVE:
-			        	startSlideshow = true;
-			            break;
-			        
-			        case DialogInterface.BUTTON_NEUTRAL:
-			        	//Open wifi settings
-			        	Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
-			        	startActivityForResult(wifiSettings, WIFI_SETTINGS_REQUEST);
-			        	break;
-			        }
-					dialog.dismiss();
-					if (startSlideshow) {
-						startSlideshow();
-					}
-			    }
-			};
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(getResources().getString(R.string.data_warning));
-			builder.setPositiveButton(getResources().getString(R.string.yes), dialogClickListener);
-			builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
-			builder.setNeutralButton(getResources().getString(R.string.wifi), dialogClickListener);
-			builder.show();
 		}
 	}
 	

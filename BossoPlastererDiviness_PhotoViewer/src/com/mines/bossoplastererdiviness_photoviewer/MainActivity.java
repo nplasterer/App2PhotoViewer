@@ -12,11 +12,16 @@ package com.mines.bossoplastererdiviness_photoviewer;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.dropbox.sync.android.DbxAccountManager;
 
@@ -34,7 +39,7 @@ import com.dropbox.sync.android.DbxAccountManager;
  * @author Austin Diviness
  */
 public class MainActivity extends Activity {
-	private DbxAccountManager accountManager;
+	private static DbxAccountManager accountManager;
 	//app specific key and secret provided from dropbox
 	public static final String APP_KEY = "ebig093cmc8g6go";
 	public static final String APP_SECRET = "nx0ryugdsn42cut";
@@ -89,18 +94,6 @@ public class MainActivity extends Activity {
 			for (String file: fileList()) {
 				deleteFile(file);
 			}
-			return true;
-		case R.id.action_settings:
-			Intent settingsIntent = new Intent(this, SettingsActivity.class);
-			startActivity(settingsIntent);
-			return true;
-		case R.id.help:
-			Intent helpIntent = new Intent(this, HelpActivity.class);
-			startActivity(helpIntent);
-			return true;
-		case R.id.about:
-			Intent aboutIntent = new Intent(this, AboutActivity.class);
-			startActivity(aboutIntent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -157,6 +150,33 @@ public class MainActivity extends Activity {
 				photos.setVisibility(View.VISIBLE);
 				View add = findViewById(R.id.add_account);
 				add.setVisibility(View.GONE);
+				
+				// Creates a dialog warning the user about data usage
+				DialogInterface.OnClickListener dialogClickListener =  new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE:
+							dialog.dismiss();
+							break;
+						
+						case DialogInterface.BUTTON_NEGATIVE:
+							Intent wifiSettings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+							startActivity(wifiSettings);
+							dialog.dismiss();
+							break;
+						}
+					}
+				};
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				TextView alert = new TextView(this);
+				alert.setText(getResources().getString(R.string.data_warning));
+				alert.setTextSize(20);
+				alert.setGravity(Gravity.CENTER_HORIZONTAL);
+				builder.setView(alert)
+					.setPositiveButton(getResources().getString(R.string.ok), dialogClickListener)
+					.setNegativeButton(getResources().getString(R.string.wifi), dialogClickListener).show();
 			}
 		}
 	}
