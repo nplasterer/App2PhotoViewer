@@ -4,6 +4,8 @@
     android:numColumns="auto_fit"
     android:gravity="center"
     android:columnWidth="100dp"
+    android:padding="10dp"
+    android:horizontalSpacing="10dp"
     android:stretchMode="columnWidth"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >

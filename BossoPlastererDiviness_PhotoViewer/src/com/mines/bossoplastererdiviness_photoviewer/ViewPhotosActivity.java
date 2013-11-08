@@ -7,7 +7,9 @@ import java.util.List;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.widget.GridView;
 
 import com.dropbox.sync.android.DbxAccountManager;
@@ -16,6 +18,8 @@ import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxFileSystem.ThumbFormat;
+import com.dropbox.sync.android.DbxFileSystem.ThumbSize;
 import com.dropbox.sync.android.DbxPath;
 
 public class ViewPhotosActivity extends Activity {
@@ -60,7 +64,8 @@ public class ViewPhotosActivity extends Activity {
 			DbxFile file;
 			try{
 
-				file = fileSystem.open(fileInfo.path);
+				//file = fileSystem.open(fileInfo.path);
+				file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
 				Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
 				pix.add(image);
 				file.close();
@@ -77,6 +82,7 @@ public class ViewPhotosActivity extends Activity {
 		}
 
 
+		
 
 
 		setContentView(R.layout.view_photos);
