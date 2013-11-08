@@ -19,24 +19,20 @@ public class ImageAdapter extends BaseAdapter {
 		this.images = images;
 	}
 
-	@Override
 	public int getCount() {
 		return images.size();
 	}
 
-	@Override
 	public Object getItem(int arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public long getItemId(int arg0) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
 	public View getView(int position, View arg1, ViewGroup arg2) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
