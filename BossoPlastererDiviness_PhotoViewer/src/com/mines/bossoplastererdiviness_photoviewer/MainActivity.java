@@ -155,7 +155,6 @@ public class MainActivity extends Activity {
 				
 				// Creates a dialog warning the user about data usage
 				DialogInterface.OnClickListener dialogClickListener =  new DialogInterface.OnClickListener() {
-					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						switch (which) {
