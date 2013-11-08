@@ -36,6 +36,18 @@
 		<activity
             android:name="com.mines.bossoplastererdiviness_photoviewer.ViewPhotosActivity"
             android:label="@string/app_name" >
+        </activity>		
+        <activity
+            android:name="com.mines.bossoplastererdiviness_photoviewer.SettingsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.mines.bossoplastererdiviness_photoviewer.AboutActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.mines.bossoplastererdiviness_photoviewer.HelpActivity"
+            android:label="@string/app_name" >
         </activity>
 
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />

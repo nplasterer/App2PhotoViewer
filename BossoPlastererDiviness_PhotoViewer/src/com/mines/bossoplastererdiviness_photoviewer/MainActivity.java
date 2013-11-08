@@ -90,6 +90,18 @@ public class MainActivity extends Activity {
 				deleteFile(file);
 			}
 			return true;
+		case R.id.action_settings:
+			Intent settingsIntent = new Intent(this, SettingsActivity.class);
+			startActivity(settingsIntent);
+			return true;
+		case R.id.help:
+			Intent helpIntent = new Intent(this, HelpActivity.class);
+			startActivity(helpIntent);
+			return true;
+		case R.id.about:
+			Intent aboutIntent = new Intent(this, AboutActivity.class);
+			startActivity(aboutIntent);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

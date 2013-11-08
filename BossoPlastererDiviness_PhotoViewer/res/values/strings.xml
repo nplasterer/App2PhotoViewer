@@ -19,5 +19,7 @@
     <string name="please_wait">Please wait&#8230;</string>
     <string name="download_stopping">Download stopping</string>
     <string name="slideshow_desc">Image container for the slideshow</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
 
 </resources>
