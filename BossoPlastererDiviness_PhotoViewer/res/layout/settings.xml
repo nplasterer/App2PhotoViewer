@@ -7,8 +7,14 @@
     <PreferenceCategory
         android:title="Settings" >
         
-        <Preference android:title="Unlink Account" android:key="unlink" />
-        <EditTextPreference android:title="Slideshow Speed" android:key="slideshow_speed" android:dialogTitle="Set Slideshow Speed"/>
+        <Preference 
+            android:title="Unlink Account" 
+			android:key="unlink" />
+        
+        <EditTextPreference 
+            android:title="Slideshow Speed" 
+            android:key="slideshow_speed" 
+            android:dialogTitle="Set Speed in Seconds"/>
         
     </PreferenceCategory>
 

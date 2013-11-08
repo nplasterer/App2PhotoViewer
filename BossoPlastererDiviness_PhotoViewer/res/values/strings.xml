@@ -21,5 +21,7 @@
     <string name="slideshow_desc">Image container for the slideshow</string>
     <string name="help">Help</string>
     <string name="about">About</string>
+    <string name="about_text">About blah blah blah</string>
+    <string name="help_text">Help blah blah blah</string>
 
 </resources>
