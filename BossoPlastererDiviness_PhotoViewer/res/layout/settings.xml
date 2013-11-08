@@ -5,7 +5,7 @@
     android:title="@string/action_settings" >
     
     <PreferenceCategory
-        android:title="Settings" >android:title="Settings" >android:title="Settings" >android:title="Settings" >
+        android:title="Settings" >
     </PreferenceCategory>
 
 </PreferenceScreen>
