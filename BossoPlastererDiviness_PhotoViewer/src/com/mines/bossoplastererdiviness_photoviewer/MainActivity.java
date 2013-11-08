@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
 	public static final String APP_KEY = "ebig093cmc8g6go";
 	public static final String APP_SECRET = "nx0ryugdsn42cut";
 	public static final int DROPBOX_REQUEST_LINK = 0;
+	private static MainActivity instance;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -47,6 +48,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		instance = this;
 		//get account manager
 		accountManager = DbxAccountManager.getInstance(getApplicationContext(), APP_KEY, APP_SECRET);
 		//check to see if an account is already linked
@@ -159,5 +161,19 @@ public class MainActivity extends Activity {
 				add.setVisibility(View.GONE);
 			}
 		}
+	}
+	
+	public void unlinkAccount() {
+		View slideshow = findViewById(R.id.start_slideshow);
+		slideshow.setVisibility(View.GONE);
+		View photos = findViewById(R.id.view_photos);
+		photos.setVisibility(View.GONE);
+		View add = findViewById(R.id.add_account);
+		add.setVisibility(View.VISIBLE);
+		accountManager.unlink();
+	}
+	
+	public static MainActivity getInstance() {
+		return instance;
 	}
 }

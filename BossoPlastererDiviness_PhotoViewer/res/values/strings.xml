@@ -11,6 +11,7 @@
     <string name="no_images">No images were found in app folder</string>
     <string name="account_linked">Account has been linked</string>
     <string name="data_warning">You are not currently connected to wifi. This app may consume a large amount of data. Would you like to continue?</string>
+    <string name="unlink_warning">You are now going to unlink your account. Do you want to continue?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="wifi">Wifi Settings</string>
