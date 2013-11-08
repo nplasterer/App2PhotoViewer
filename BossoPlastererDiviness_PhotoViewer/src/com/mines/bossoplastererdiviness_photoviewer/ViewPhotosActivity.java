@@ -90,20 +90,7 @@ public class ViewPhotosActivity extends Activity {
 		gridView = (GridView) findViewById(R.id.gridView1);
 
 		ImageAdapter adapter = new ImageAdapter(this, pix);
-
-		//		ArrayAdapter<Bitmap> adapter = new ArrayAdapter<Bitmap>(this,
-		//				android.R.layout.grid_item_image, pix);
-
 		gridView.setAdapter(adapter);
-
-		//		gridView.setOnItemClickListener(new OnItemClickListener() {
-		//			public void onItemClick(AdapterView<?> parent, View v,
-		//					int position, long id) {
-		//				Toast.makeText(getApplicationContext(),
-		//						((TextView) v).getText(), Toast.LENGTH_SHORT).show();
-		//			}
-		//		});
-
 	}
 
 }
