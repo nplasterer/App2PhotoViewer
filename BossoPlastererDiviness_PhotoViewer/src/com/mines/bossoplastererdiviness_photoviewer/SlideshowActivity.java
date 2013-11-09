@@ -179,7 +179,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	/**
 	 * Callback function used to start the slideshow if images to show exist.
 	 */
-	@Override
 	public void onTaskCompleted(int requestID) {
 		if (requestID == DOWNLOAD_IMAGES_TASK_REQUEST) {
 			if (fileList().length > 0) {
