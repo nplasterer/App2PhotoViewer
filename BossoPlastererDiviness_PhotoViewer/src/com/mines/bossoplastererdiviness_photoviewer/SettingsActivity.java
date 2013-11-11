@@ -48,7 +48,6 @@ public class SettingsActivity extends PreferenceActivity {
 	public void onAccountUnlinkClick(View view) {
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			
-			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
