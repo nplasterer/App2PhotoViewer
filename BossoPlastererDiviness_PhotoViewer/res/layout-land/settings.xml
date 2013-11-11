@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:title="@string/action_settings" >
+    
+    <PreferenceCategory
+        android:title="Settings" >
+        
+        <Preference 
+            android:title="Unlink Account" 
+			android:key="unlink" />
+        
+        <EditTextPreference 
+            android:title="Slideshow Speed" 
+            android:key="slideshow_speed" 
+            android:dialogTitle="Set Speed in Seconds"/>
+        
+    </PreferenceCategory>
+
+</PreferenceScreen>
