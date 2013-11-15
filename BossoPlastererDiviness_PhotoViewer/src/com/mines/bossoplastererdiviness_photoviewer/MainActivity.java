@@ -142,8 +142,6 @@ public class MainActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == DROPBOX_REQUEST_LINK) {
 			if (resultCode == Activity.RESULT_OK) {
-				//lets the user know that there account has been linked
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.account_linked), Toast.LENGTH_LONG).show();
 				// set visibility of buttons
 				View slideshow = findViewById(R.id.start_slideshow);
 				slideshow.setVisibility(View.VISIBLE);
