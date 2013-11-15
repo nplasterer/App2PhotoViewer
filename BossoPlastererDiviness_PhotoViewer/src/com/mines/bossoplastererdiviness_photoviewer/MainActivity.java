@@ -84,19 +84,6 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.remove_account:
-			View slideshow = findViewById(R.id.start_slideshow);
-			slideshow.setVisibility(View.GONE);
-			View photos = findViewById(R.id.view_photos);
-			photos.setVisibility(View.GONE);
-			View add = findViewById(R.id.add_account);
-			add.setVisibility(View.VISIBLE);
-			accountManager.unlink();
-			// remove image files that may have been saved previously
-			for (String file: fileList()) {
-				deleteFile(file);
-			}
-			return true;
 		case R.id.action_settings:
 			Intent settings = new Intent(this, SettingsActivity.class);
 			startActivity(settings);	
