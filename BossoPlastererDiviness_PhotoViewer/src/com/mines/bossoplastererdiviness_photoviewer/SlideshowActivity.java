@@ -51,7 +51,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
 	public static final int DOWNLOAD_IMAGES_TASK_REQUEST = 2;
-	private static final String DEFAULT_SPEED = "3000";
+	private static final int DEFAULT_SPEED = 3000;
 	private static final int MILLISECONDS = 1000;
 
 	
@@ -70,7 +70,13 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		// set instance variables
 		imageIndex = 0;
 		delay = 0;
-		period = Float.valueOf(prefs.getString("slideshow_speed", DEFAULT_SPEED)) * MILLISECONDS;
+		String slideshowSpeedPref = prefs.getString("slideshow_speed", "none");
+		if (slideshowSpeedPref.equals("none") || slideshowSpeedPref.equals("")) {
+			period = DEFAULT_SPEED;
+		}
+		else {
+			period = Float.valueOf(slideshowSpeedPref) * MILLISECONDS;
+		}
 		timer = new Timer();
 		slideshowStarted = false;
 		handler = new Handler();
