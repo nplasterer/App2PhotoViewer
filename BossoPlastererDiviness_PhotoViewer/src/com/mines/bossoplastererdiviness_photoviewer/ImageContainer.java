@@ -59,9 +59,9 @@ public class ImageContainer extends Activity {
         iView.setImageBitmap(image);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_image_container, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.activity_image_container, menu);
+//        return true;
+//    }
 }
