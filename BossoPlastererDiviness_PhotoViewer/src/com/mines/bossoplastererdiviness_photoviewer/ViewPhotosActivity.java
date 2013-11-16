@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.dropbox.sync.android.DbxAccountManager;
@@ -29,13 +32,14 @@ public class ViewPhotosActivity extends Activity {
 	private DbxFileSystem fileSystem;
 	private DbxAccountManager accountManager;
 	private ArrayList<Bitmap> pix;
+	private ArrayList<DbxPath> paths;
 
 
 
 	public ViewPhotosActivity(){
 		filesInfo = new ArrayList<DbxFileInfo>();
 		pix = new ArrayList<Bitmap>();
-
+		paths = new ArrayList<DbxPath>();
 
 	}
 
@@ -68,6 +72,7 @@ public class ViewPhotosActivity extends Activity {
 				file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
 				Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
 				pix.add(image);
+				paths.add(fileInfo.path);
 				file.close();
 			}catch (DbxException e1) {
 				// TODO Auto-generated catch block
@@ -91,6 +96,20 @@ public class ViewPhotosActivity extends Activity {
 
 		ImageAdapter adapter = new ImageAdapter(this, pix);
 		gridView.setAdapter(adapter);
+		
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long row) {
+				Log.d("mine", "position: " + position);
+				DbxPath path = paths.get(position);
+				String name = path.getName();
+				Log.d("mine", "begin intent");
+				Intent i = new Intent(getApplicationContext(), ImageContainer.class);
+				i.putExtra("name", name);
+				Log.d("mine", "send intent");
+				startActivity(i);
+				Log.d("mine", "end intent");
+			}
+		});
 	}
 
 }
