@@ -6,17 +6,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
+import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Menu;
 import android.view.Window;
@@ -47,7 +43,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private int imageIndex;
 	private Timer timer;
 	private int delay;
-	private int period;
+	private double period;
 	private Handler handler;
 	private Runnable slideShowRunnable;
 	private boolean slideshowStarted;
@@ -55,6 +51,8 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 	private Bitmap nextBitmap;
 	public static final int WIFI_SETTINGS_REQUEST = 1;
 	public static final int DOWNLOAD_IMAGES_TASK_REQUEST = 2;
+	private static final String DEFAULT_SPEED = "3000";
+	private static final int MILLISECONDS = 1000;
 
 	
 	
@@ -68,10 +66,11 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.start_slideshow);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		// set instance variables
 		imageIndex = 0;
 		delay = 0;
-		period = 3000;
+		period = Float.valueOf(prefs.getString("slideshow_speed", DEFAULT_SPEED)) * MILLISECONDS;
 		timer = new Timer();
 		slideshowStarted = false;
 		handler = new Handler();
@@ -111,7 +110,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 				public void run() {
 					handler.post(slideShowRunnable);
 				}
-			}, delay, period); }
+			}, delay, (long) period); }
 		else {
 			startSlideshow();
 		}
@@ -150,7 +149,7 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 			public void run() {
 				handler.post(slideShowRunnable);
 			}
-		}, delay, period);
+		}, delay, (long) period);
 	}
 
     /**

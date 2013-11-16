@@ -19,30 +19,31 @@ public class SettingsActivity extends PreferenceActivity {
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		addPreferencesFromResource(R.layout.settings);
-//		Preference unlinkAccount = (Preference) findPreference("unlink");
-//		unlinkAccount.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-//			public boolean onPreferenceClick(Preference pref) {
-//				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-//
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//						switch (which) {
-//						case DialogInterface.BUTTON_POSITIVE:
-//							// TODO make sure to change buttons on main screen accordingly
-//							MainActivity.getInstance().unlinkAccount();
-//							break;
-//						}
-//						dialog.dismiss();
-//					}
-//				};
-//				AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-//				builder.setMessage(getResources().getString(R.string.unlink_warning));
-//				builder.setPositiveButton(getResources().getString(R.string.yes), dialogClickListener);
-//				builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
-//				builder.show();
-//				return true;
-//			}
-//		});
+		mainActivity = this;
+		Preference unlinkAccount = (Preference) findPreference("unlink");
+		unlinkAccount.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference pref) {
+				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case DialogInterface.BUTTON_POSITIVE:
+							// TODO make sure to change buttons on main screen accordingly
+							MainActivity.getInstance().unlinkAccount();
+							break;
+						}
+						dialog.dismiss();
+					}
+				};
+				AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+				builder.setMessage(getResources().getString(R.string.unlink_warning));
+				builder.setPositiveButton(getResources().getString(R.string.yes), dialogClickListener);
+				builder.setNegativeButton(getResources().getString(R.string.no), dialogClickListener);
+				builder.show();
+				return true;
+			}
+		});
 	}
 
 	public void onAccountUnlinkClick(View view) {

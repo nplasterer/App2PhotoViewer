@@ -84,19 +84,6 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.remove_account:
-			View slideshow = findViewById(R.id.start_slideshow);
-			slideshow.setVisibility(View.GONE);
-			View photos = findViewById(R.id.view_photos);
-			photos.setVisibility(View.GONE);
-			View add = findViewById(R.id.add_account);
-			add.setVisibility(View.VISIBLE);
-			accountManager.unlink();
-			// remove image files that may have been saved previously
-			for (String file: fileList()) {
-				deleteFile(file);
-			}
-			return true;
 		case R.id.action_settings:
 			Intent settings = new Intent(this, SettingsActivity.class);
 			startActivity(settings);	
@@ -155,8 +142,6 @@ public class MainActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == DROPBOX_REQUEST_LINK) {
 			if (resultCode == Activity.RESULT_OK) {
-				//lets the user know that there account has been linked
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.account_linked), Toast.LENGTH_LONG).show();
 				// set visibility of buttons
 				View slideshow = findViewById(R.id.start_slideshow);
 				slideshow.setVisibility(View.VISIBLE);
