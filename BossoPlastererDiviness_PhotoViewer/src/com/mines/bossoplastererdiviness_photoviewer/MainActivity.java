@@ -32,8 +32,9 @@ import com.dropbox.sync.android.DbxAccountManager;
  * 
  * Documentation Statement: We worked on this as a team. All of this code is original. When we got
  * stuck we used stackoverflow.com for hints and the Dropbox API as documentation.
- * Point Distribution: We would like to distribute the points evenly among all three of us.
+ * Point Distribution: We would like to distribute the points evenly among all four of us.
  * 
+ * @author Marcus Bermel
  * @author Naomi Plasterer
  * @author Brandon Bosso
  * @author Austin Diviness
@@ -179,6 +180,9 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * This method is referenced by the settings activity to unlink the account. 
+	 */
 	public void unlinkAccount() {
 		View slideshow = findViewById(R.id.start_slideshow);
 		slideshow.setVisibility(View.GONE);
@@ -189,6 +193,9 @@ public class MainActivity extends Activity {
 		accountManager.unlink();
 	}
 	
+	/**
+	 * returns the instance of the main activity class.
+	 */
 	public static MainActivity getInstance() {
 		return instance;
 	}

@@ -9,11 +9,24 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.view.View;
 
+/**
+ * This class displays a description which describes who the authors are.
+ * 
+ * @author Brandon Bosso
+ * @author Naomi Plasterer
+ * @author Marcus Bermel
+ * @author Austin Diviness
+ */
 public class SettingsActivity extends PreferenceActivity {
 	
 	private Activity mainActivity;
 	
-	// TODO double check deprecation
+	/* (non-Javadoc)
+	 * @see android.preference.PreferenceActivity#onCreate(android.os.Bundle)
+	 * 
+	 * We suppressed this warning because there are no new ways to create a preference activity.
+	 * A preference activity fit our app best and there was no easy or comparable way to implement it other wise.
+	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle bundle) {
@@ -25,11 +38,13 @@ public class SettingsActivity extends PreferenceActivity {
 			public boolean onPreferenceClick(Preference pref) {
 				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 
-					@Override
+					/* (non-Javadoc)
+					 * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
+					 */
+					//@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
 						case DialogInterface.BUTTON_POSITIVE:
-							// TODO make sure to change buttons on main screen accordingly
 							MainActivity.getInstance().unlinkAccount();
 							break;
 						}
@@ -46,6 +61,9 @@ public class SettingsActivity extends PreferenceActivity {
 		});
 	}
 
+	/**
+	 * @param view
+	 */
 	public void onAccountUnlinkClick(View view) {
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			

@@ -33,11 +33,12 @@ import com.dropbox.sync.android.DbxPath.InvalidPathException;
 /**
  * Description: Displays slideshow of photos
  * 
+ * @author Marcus Bermel
  * @author Naomi Plasterer
  * @author Brandon Bosso
  * @author Austin Diviness
  */
-public class SlideshowActivity extends Activity implements OnTaskCompleted {
+public class SlideshowActivity extends Activity {
 	private DbxFileSystem filesystem = null;
 	private List<DbxFileInfo> files;
 	private int imageIndex;
@@ -179,19 +180,6 @@ public class SlideshowActivity extends Activity implements OnTaskCompleted {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-	}
-
-	/**
-	 * Callback function used to start the slideshow if images to show exist.
-	 */
-	public void onTaskCompleted(int requestID) {
-		if (requestID == DOWNLOAD_IMAGES_TASK_REQUEST) {
-			if (fileList().length > 0) {
-				startSlideshow();
-			} else {
-				Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_images), Toast.LENGTH_LONG).show();
-			}
-		}
 	}
 	
     /**

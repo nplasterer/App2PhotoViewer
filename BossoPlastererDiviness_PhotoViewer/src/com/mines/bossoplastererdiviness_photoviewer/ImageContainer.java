@@ -20,25 +20,35 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 
+/**
+ * This class handles the fullscreen display of an image from the thumbnail view
+ * 
+ * @author Brandon Bosso
+ * @author Naomi Plasterer
+ * @author Marcus Bermel
+ * @author Austin Diviness
+ */
 public class ImageContainer extends Activity {
 	
 	private DbxFileSystem fileSystem;
 	private DbxAccountManager accountManager;
 
+    /* (non-Javadoc)
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	Log.d("mine", "receive intent");
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_image_container);
         ImageView iView = (ImageView) findViewById(R.id.image_container);
         
+        //Opens the image contained in the grid element that was clicked by the user
         accountManager = DbxAccountManager.getInstance(getApplicationContext(), MainActivity.APP_KEY, MainActivity.APP_SECRET);
         try {
 			fileSystem = DbxFileSystem.forAccount(accountManager.getLinkedAccount());
 		} catch (Unauthorized e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         Intent i = getIntent();
@@ -50,18 +60,12 @@ public class ImageContainer extends Activity {
 			file = fileSystem.open(path);
 			image = BitmapFactory.decodeStream(file.getReadStream());
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        //Populates the ImageView with the opened bitmap
         iView.setImageBitmap(image);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.activity_image_container, menu);
-//        return true;
-//    }
 }
