@@ -32,5 +32,6 @@
     <string name="about_app">App Info:\nVersion 1.0</string>
     <string name="images">To add images to your Dropbox account:\n1. Log into Dropbox\n2. Navigate to the Apps folder\n3. Navigate to the photoSlideshowApp folder\n4. Upload your images</string>
     <string name="about_unlink">To unlink your account from this app:\n1. In the options menu, select Settings\n2. Select the Unlink Account option</string>
+    <string name="title_activity_load_thumbnails">LoadThumbnails</string>
 
 </resources>

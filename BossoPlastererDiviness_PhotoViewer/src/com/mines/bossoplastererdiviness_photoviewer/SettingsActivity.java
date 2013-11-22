@@ -31,6 +31,7 @@ public class SettingsActivity extends PreferenceActivity {
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		addPreferencesFromResource(R.layout.settings);
 		mainActivity = this;
 		Preference unlinkAccount = (Preference) findPreference("unlink");

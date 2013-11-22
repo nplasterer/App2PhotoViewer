@@ -33,7 +33,7 @@ import com.dropbox.sync.android.DbxPath;
  * @author Marcus Bermel
  * @author Austin Diviness
  */
-public class ViewPhotosActivity extends Activity {
+public class ViewPhotosActivity extends Activity implements OnTaskCompleted {
 
 	GridView gridView;
 	private List<DbxFileInfo> filesInfo;
@@ -48,10 +48,13 @@ public class ViewPhotosActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.view_photos);
 		filesInfo = new ArrayList<DbxFileInfo>();
 		pix = new ArrayList<Bitmap>();
 		paths = new ArrayList<DbxPath>();
 		accountManager = DbxAccountManager.getInstance(getApplicationContext(), MainActivity.APP_KEY, MainActivity.APP_SECRET);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+
 		try {
 			fileSystem = DbxFileSystem.forAccount(accountManager.getLinkedAccount());
 		} catch (Unauthorized e) {
@@ -64,37 +67,61 @@ public class ViewPhotosActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		// Adds thumbnail of each image from Dropbox to an ArrayList
-		for (DbxFileInfo fileInfo: filesInfo) {
-			String filename = fileInfo.path.getName();
-			DbxFile file;
-			try{
-				file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
-				Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
-				pix.add(image);
-				paths.add(fileInfo.path);
-				file.close();
-			}catch (DbxException e1) {
-				e1.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.gc();
-		}
+//				// Adds thumbnail of each image from Dropbox to an ArrayList
+//				for (DbxFileInfo fileInfo: filesInfo) {
+//					String filename = fileInfo.path.getName();
+//					DbxFile file;
+//					try{
+//						Log.d("mine", "path: " + fileInfo.path);
+//						file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
+//						Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
+//						pix.add(image);
+//						paths.add(fileInfo.path);
+//						file.close();
+//					}catch (DbxException e1) {
+//						e1.printStackTrace();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//					System.gc();
+//				}
+				
+//				gridView = (GridView) findViewById(R.id.gridView1);
+//
+//				// Populates the gridView with the thumbnails opened earlier
+//				ImageAdapter adapter = new ImageAdapter(this, pix);
+//				// Attaches imageAdapter to gridView
+//				gridView.setAdapter(adapter);
+//
+//				// sets the onClick listener for each element of the gridView
+//				gridView.setOnItemClickListener(new OnItemClickListener() {
+//					public void onItemClick(AdapterView<?> parent, View view, int position, long row) {
+//						DbxPath path = paths.get(position);
+//						String name = path.getName();
+//						Intent i = new Intent(getApplicationContext(), ImageContainer.class);
+//						i.putExtra("name", name);
+//						startActivity(i);
+//					}
+//				});
 
-		setContentView(R.layout.view_photos);
+		LoadThumbnails load = new LoadThumbnails(this, this, 15);
+		load.execute(fileSystem);
+	}
 
+	public void onTaskCompleted(int requestID, ArrayList<Bitmap> pix, ArrayList<DbxPath> path) {
 		gridView = (GridView) findViewById(R.id.gridView1);
-		
+		this.paths = path;
+
 		// Populates the gridView with the thumbnails opened earlier
 		ImageAdapter adapter = new ImageAdapter(this, pix);
 		// Attaches imageAdapter to gridView
 		gridView.setAdapter(adapter);
-		
+
 		// sets the onClick listener for each element of the gridView
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long row) {
 				DbxPath path = paths.get(position);
+				
 				String name = path.getName();
 				Intent i = new Intent(getApplicationContext(), ImageContainer.class);
 				i.putExtra("name", name);
