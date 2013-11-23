@@ -72,11 +72,11 @@ public class ImageAdapter extends BaseAdapter {
 
 			gridView = new View(context);
 
-			// get layout from mobile.xml
+			// inflate image_helper layout
 			gridView = inflater.inflate(R.layout.image_helper, null);
 
 
-			// set image based on selected text
+			// set images
 			ImageView imageView = (ImageView) gridView
 					.findViewById(R.id.grid_image);
 
