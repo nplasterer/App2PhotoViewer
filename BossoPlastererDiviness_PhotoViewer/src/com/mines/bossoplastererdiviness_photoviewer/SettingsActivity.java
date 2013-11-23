@@ -63,6 +63,8 @@ public class SettingsActivity extends PreferenceActivity {
 	}
 
 	/**
+	 * Unlinks account if user clicks yes in dialog that is created.
+	 * 
 	 * @param view
 	 */
 	public void onAccountUnlinkClick(View view) {
