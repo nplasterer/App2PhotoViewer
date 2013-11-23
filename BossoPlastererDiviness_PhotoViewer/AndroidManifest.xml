@@ -86,16 +86,6 @@
             android:enabled="true"
             android:exported="false"
             android:label="Dropbox Sync" />
-
-        <activity
-            android:name=".LoadThumbnails"
-            android:label="@string/title_activity_load_thumbnails" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
