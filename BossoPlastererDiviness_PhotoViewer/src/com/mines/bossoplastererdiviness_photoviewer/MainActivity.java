@@ -170,6 +170,7 @@ public class MainActivity extends Activity {
 				};
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				TextView alert = new TextView(this);
+				alert.setPadding(2, 5, 2, 5);
 				alert.setText(getResources().getString(R.string.data_warning));
 				alert.setTextSize(20);
 				alert.setGravity(Gravity.CENTER_HORIZONTAL);

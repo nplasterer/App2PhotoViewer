@@ -67,47 +67,13 @@ public class ViewPhotosActivity extends Activity implements OnTaskCompleted {
 			e.printStackTrace();
 		}
 
-//				// Adds thumbnail of each image from Dropbox to an ArrayList
-//				for (DbxFileInfo fileInfo: filesInfo) {
-//					String filename = fileInfo.path.getName();
-//					DbxFile file;
-//					try{
-//						Log.d("mine", "path: " + fileInfo.path);
-//						file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
-//						Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
-//						pix.add(image);
-//						paths.add(fileInfo.path);
-//						file.close();
-//					}catch (DbxException e1) {
-//						e1.printStackTrace();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//					System.gc();
-//				}
-				
-//				gridView = (GridView) findViewById(R.id.gridView1);
-//
-//				// Populates the gridView with the thumbnails opened earlier
-//				ImageAdapter adapter = new ImageAdapter(this, pix);
-//				// Attaches imageAdapter to gridView
-//				gridView.setAdapter(adapter);
-//
-//				// sets the onClick listener for each element of the gridView
-//				gridView.setOnItemClickListener(new OnItemClickListener() {
-//					public void onItemClick(AdapterView<?> parent, View view, int position, long row) {
-//						DbxPath path = paths.get(position);
-//						String name = path.getName();
-//						Intent i = new Intent(getApplicationContext(), ImageContainer.class);
-//						i.putExtra("name", name);
-//						startActivity(i);
-//					}
-//				});
-
 		LoadThumbnails load = new LoadThumbnails(this, this, 15);
 		load.execute(fileSystem);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.mines.bossoplastererdiviness_photoviewer.OnTaskCompleted#onTaskCompleted(int, java.util.ArrayList, java.util.ArrayList)
+	 */
 	public void onTaskCompleted(int requestID, ArrayList<Bitmap> pix, ArrayList<DbxPath> path) {
 		gridView = (GridView) findViewById(R.id.gridView1);
 		this.paths = path;

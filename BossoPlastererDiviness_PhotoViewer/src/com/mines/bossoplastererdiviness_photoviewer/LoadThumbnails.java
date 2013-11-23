@@ -61,16 +61,13 @@ public class LoadThumbnails extends AsyncTask<DbxFileSystem, Void, Boolean> {
 	 */
 	@Override
 	protected Boolean doInBackground(DbxFileSystem... params) {
-		int count = 0;
-		//Downloads images and saves them to a app specific folder on the device
+		//Opens thumbnails for each image contained in the dropbox folder
 		try {
 			DbxFileSystem fileSystem = params[0];
 			for (DbxFileInfo fileInfo: fileSystem.listFolder(DbxPath.ROOT)) {
 				String filename = fileInfo.path.getName();
 				DbxFile file;
 				try{
-					Log.d("mine", "file: " + count);
-					Log.d("mine", "path: " + fileInfo.path);
 					file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
 					Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
 					pix.add(image);
@@ -82,7 +79,6 @@ public class LoadThumbnails extends AsyncTask<DbxFileSystem, Void, Boolean> {
 					e.printStackTrace();
 				}
 				System.gc();
-				count++;
 			}
 		}
 		catch (Exception e) {

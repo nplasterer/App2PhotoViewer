@@ -58,7 +58,9 @@ public class ImageContainer extends Activity {
         Bitmap image = null;
         try {
 			file = fileSystem.open(path);
-			image = BitmapFactory.decodeStream(file.getReadStream());
+			ImageScaler imageScaler = new ImageScaler(this);
+			
+			image = BitmapFactory.decodeStream(file.getReadStream(), null, imageScaler.setBitmapOptions(file));
 		} catch (DbxException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
