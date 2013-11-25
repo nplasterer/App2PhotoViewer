@@ -6,19 +6,21 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.view.Display;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxAccountManager;
@@ -62,6 +64,7 @@ public class SlideshowActivity extends Activity {
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("mine", "here we go");
 		super.onCreate(savedInstanceState);
 		// set fullscreen window attributes TODO can this be moved to xml layout?
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -149,15 +152,35 @@ public class SlideshowActivity extends Activity {
 	 * Runs the slideshow.
 	 */
 	public void startSlideshow() {
-		slideshowStarted = true;
-		imageIndex = 0;
-		timer = new Timer();
-		initialBitmapLoad();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			public void run() {
-				handler.post(slideShowRunnable);
-			}
-		}, delay, (long) period);
+		if (files.size() > 0) {
+			slideshowStarted = true;
+			imageIndex = 0;
+			timer = new Timer();
+			initialBitmapLoad();
+			timer.scheduleAtFixedRate(new TimerTask() {
+				public void run() {
+					handler.post(slideShowRunnable);
+				}
+			}, delay, (long) period);
+		}
+		else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			TextView alert = new TextView(this);
+			alert.setPadding(2, 5, 2, 5);
+			alert.setText(getResources().getString(R.string.no_images_warning));
+			alert.setTextSize(20);
+			alert.setGravity(Gravity.CENTER_HORIZONTAL);
+			builder.setView(alert);
+			AlertDialog dlg = builder.create();
+			dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
+				
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					finish();
+				}
+			});
+			dlg.show();
+		}
 	}
 
     /**
@@ -203,8 +226,8 @@ public class SlideshowActivity extends Activity {
 		DbxFile file = null;
 		Bitmap bitmap = null;
 		try {
-
 			file = filesystem.open(files.get(imageIndex).path);
+			Log.d("mine", "loadBitmap");
 			// set up bitmap options
 			bitmap = BitmapFactory.decodeStream(file.getReadStream(), null, imageScaler.setBitmapOptions(file));
 			if (which == BitmapSelect.CURRENT) {
@@ -215,6 +238,8 @@ public class SlideshowActivity extends Activity {
 		} catch (DbxException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			file.close();

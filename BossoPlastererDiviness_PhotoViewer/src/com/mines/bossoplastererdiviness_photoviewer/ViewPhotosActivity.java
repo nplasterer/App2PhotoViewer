@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
@@ -66,9 +70,28 @@ public class ViewPhotosActivity extends Activity implements OnTaskCompleted {
 		} catch (DbxException e) {
 			e.printStackTrace();
 		}
-
-		LoadThumbnails load = new LoadThumbnails(this, this, 15);
-		load.execute(fileSystem);
+		if (filesInfo.size() > 0) {
+			LoadThumbnails load = new LoadThumbnails(this, this, 15);
+			load.execute(fileSystem);
+		}
+		else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			TextView alert = new TextView(this);
+			alert.setPadding(2, 5, 2, 5);
+			alert.setText(getResources().getString(R.string.no_images_warning));
+			alert.setTextSize(20);
+			alert.setGravity(Gravity.CENTER_HORIZONTAL);
+			builder.setView(alert);
+			AlertDialog dlg = builder.create();
+			dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
+				
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					finish();
+				}
+			});
+			dlg.show();
+		}
 	}
 
 	/* (non-Javadoc)
