@@ -1,53 +1,49 @@
 package com.mines.bossoplastererdiviness_photoviewer;
 
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxFileSystem.ThumbFormat;
+import com.dropbox.sync.android.DbxFileSystem.ThumbSize;
 import com.dropbox.sync.android.DbxPath;
-
 /**
- * Description: This class downloads images from dropbox on different threads.
+ * This class loads the thumbnails for the gridView on a separate thread to free the UI
  * 
- * @author Austin Diviness
- * @author Naomi Plasterer
  * @author Brandon Bosso
+ * @author Naomi Plasterer
+ * @author Marcus Bermel
+ * @author Austin Diviness
  */
-public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> {
+public class LoadThumbnails extends AsyncTask<DbxFileSystem, Void, Boolean> {
 
 	private ProgressDialog loadingDialog;
 	private Activity activity;
 	private OnTaskCompleted listener;
-	private List<DbxFileInfo> filesInfo;
 	private int requestID;
+	private ArrayList<Bitmap> pix;
+	private ArrayList<DbxPath> paths;
 	
-	/**
-	 * This is a constructor that sets the variables for this class.
-	 * 
-	 * @param activity - the calling activity
-	 * @param listener - a listener to return content to the calling activity
-	 */
-	public DownloadImagesTask(Activity activity, OnTaskCompleted listener, int requestID) {
+
+	public LoadThumbnails(Activity activity, OnTaskCompleted listener, int requestID) {
 		this.activity = activity;
 		this.listener = listener;
 		this.requestID = requestID;
-		filesInfo = new ArrayList<DbxFileInfo>();
+		pix = new ArrayList<Bitmap>();
+		paths = new ArrayList<DbxPath>();
 	}
+
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#onPreExecute()
 	 */
@@ -65,21 +61,26 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 	 */
 	@Override
 	protected Boolean doInBackground(DbxFileSystem... params) {
-		//Downloads images and saves them to a app specific folder on the device
+		//Opens thumbnails for each image contained in the dropbox folder
 		try {
-			DbxFileSystem filesystem = params[0];
-			filesInfo = filesystem.listFolder(DbxPath.ROOT);
-			for (DbxFileInfo fileInfo: filesInfo) {
+			DbxFileSystem fileSystem = params[0];
+			for (DbxFileInfo fileInfo: fileSystem.listFolder(DbxPath.ROOT)) {
 				String filename = fileInfo.path.getName();
-				if (!Arrays.asList(activity.fileList()).contains(filename)) {
-					DbxFile file = filesystem.open(fileInfo.path);
-					System.gc();
+				DbxFile file;
+				try{
+					file = fileSystem.openThumbnail(fileInfo.path, ThumbSize.M, ThumbFormat.PNG);
 					Bitmap image = BitmapFactory.decodeStream(file.getReadStream());
-					saveFile(image, filename);
+					pix.add(image);
+					paths.add(fileInfo.path);
 					file.close();
+				}catch (DbxException e1) {
+					e1.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
+				System.gc();
 			}
-		} 
+		}
 		catch (Exception e) {
 			e.printStackTrace();
 			Toast.makeText(activity.getBaseContext(), activity.getResources().getString(R.string.download_stopping), Toast.LENGTH_SHORT).show();
@@ -90,32 +91,12 @@ public class DownloadImagesTask extends AsyncTask<DbxFileSystem, Void, Boolean> 
 		return true;
 	}
 
-	
-
-
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
-	@Override 
+	//@Override
 	protected void onPostExecute(Boolean result) {
-		listener.onTaskCompleted(requestID);	
+		listener.onTaskCompleted(requestID, pix, paths);        
 	}
-	
-	/**
-	 * This function saves a bitmap image to a file in the specified app specific folder.
-	 * 
-	 * @param image - the bitmap image from dropbox
-	 * @param filename - the name of the file from dropbox to be saved
-	 */
-	protected void saveFile(Bitmap image, String filename) {
-		try {
-			FileOutputStream fileOutStream = activity.openFileOutput(filename, Context.MODE_PRIVATE);
-			image.compress(Bitmap.CompressFormat.JPEG, 90, fileOutStream);
-			fileOutStream.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-	}
+
 }

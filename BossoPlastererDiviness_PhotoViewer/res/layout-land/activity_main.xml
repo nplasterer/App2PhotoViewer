@@ -1,15 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    style="@style/main_style">
 
-    <TextView
-        android:id="@+id/main_title"
+    <ImageView
+        android:id="@+id/main_logo"
         style="@style/MainTitle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.33"
-        android:text="@string/main_title" />
+        android:src="@drawable/app_logo" />
 
    <LinearLayout
     	android:layout_width="fill_parent"
